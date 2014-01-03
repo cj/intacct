@@ -6,7 +6,7 @@ Feature: Intacct Vendor
     And I have a vendor
     Then I create an Intacct Vendor object
 
-  Scenario Outline: It should "CRUD" a customer in Intacct
+  Scenario Outline: It should "CRUD" a vendor in Intacct
     Given I use the #<method> method
     Then I should recieve a sucessfull response
 
