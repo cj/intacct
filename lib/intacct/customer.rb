@@ -1,5 +1,3 @@
-require 'nokogiri'
-
 module Intacct
   class Customer < Intacct::Base
     def create

@@ -1,6 +1,15 @@
+require 'rails'
+require "faker"
+require "pry"
+
+
 require "intacct/version"
+require 'net/http'
+require 'nokogiri'
 require "intacct/base"
 require "intacct/customer"
+require "intacct/vendor"
+
 
 module Intacct
   extend self

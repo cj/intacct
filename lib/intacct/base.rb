@@ -1,5 +1,3 @@
-require 'net/http'
-
 module Intacct
   class Base < Struct.new(:object, :current_user)
     attr_accessor :response, :data
