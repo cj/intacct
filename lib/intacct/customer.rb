@@ -2,15 +2,13 @@ require 'pry'
 require 'nokogiri'
 
 module Intacct
-  class Customer < Struct.new(:customer, :current_user)
-    attr_accessor :last_response, :data
-
+  class Customer < Intacct::Base
     def create
-      @last_response = Intacct.send_xml do |xml|
+      send_xml do |xml|
         xml.function(controlid: "1") {
           xml.send("create_customer") {
             xml.customerid intacct_customer_id
-            xml.name customer.name
+            xml.name object.name
             xml.comments
             xml.status "active"
           }
@@ -21,7 +19,7 @@ module Intacct
     end
 
     def get *fields
-      return false if customer.intacct_system_id.nil?
+      return false if object.intacct_system_id.nil?
 
       fields = [
         :customerid,
@@ -29,7 +27,7 @@ module Intacct
         :termname
       ] if fields.empty?
 
-      @last_response = Intacct.send_xml do |xml|
+      send_xml do |xml|
         xml.function(controlid: "f4") {
           xml.get(object: "customer", key: "#{intacct_system_id}") {
             xml.fields {
@@ -43,9 +41,9 @@ module Intacct
 
       if successful?
         @data = OpenStruct.new({
-          id: last_response.at("//customer//customerid").content,
-          name: last_response.at("//customer//name").content,
-          termname: last_response.at("//customer//termname").content
+          id: response.at("//customer//customerid").content,
+          name: response.at("//customer//name").content,
+          termname: response.at("//customer//termname").content
         })
       end
 
@@ -53,13 +51,13 @@ module Intacct
     end
 
     def update updated_customer = false
-      @customer = updated_customer if updated_customer
-      return false if customer.intacct_system_id.nil?
+      @object = updated_customer if updated_customer
+      return false if object.intacct_system_id.nil?
 
-      @last_response = Intacct.send_xml do |xml|
+      send_xml do |xml|
         xml.function(controlid: "1") {
           xml.update_customer(customerid: intacct_system_id) {
-            xml.name customer.name
+            xml.name object.name
             xml.comments
             xml.status "active"
           }
@@ -70,9 +68,9 @@ module Intacct
     end
 
     def destroy
-      return false if customer.intacct_system_id.nil?
+      return false if object.intacct_system_id.nil?
 
-      @last_response = Intacct.send_xml do |xml|
+      @response = send_xml do |xml|
         xml.function(controlid: "1") {
           xml.delete_customer(customerid: intacct_system_id)
         }
@@ -82,21 +80,11 @@ module Intacct
     end
 
     def intacct_customer_id
-      "C#{customer.id}"
+      "C#{object.id}"
     end
 
     def intacct_system_id
-      "C#{customer.intacct_system_id}"
-    end
-
-    private
-
-    def successful?
-      if last_response.at('//result//status') and last_response.at('//result//status').content=="success"
-        true
-      else
-        false
-      end
+      "C#{object.intacct_system_id}"
     end
   end
 end
