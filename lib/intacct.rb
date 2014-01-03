@@ -4,6 +4,7 @@ require 'nokogiri'
 require "intacct/base"
 require "intacct/customer"
 require "intacct/vendor"
+require "intacct/invoice"
 
 class Object
   def blank?

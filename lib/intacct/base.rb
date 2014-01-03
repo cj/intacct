@@ -2,6 +2,11 @@ module Intacct
   class Base < Struct.new(:object, :current_user)
     attr_accessor :response, :data
 
+    def initialize *params
+      params[0] = OpenStruct.new(params[0]) if params[0].is_a? Hash
+      super(*params)
+    end
+
     private
 
     def send_xml

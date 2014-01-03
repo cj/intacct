@@ -3,7 +3,7 @@ Feature: Intacct Customer
 
   Background:
     Given I have setup the correct settings
-    And I have a company
+    And I have a customer
     Then I create an Intacct Customer object
 
   Scenario Outline: It should "CRUD" a customer in Intacct

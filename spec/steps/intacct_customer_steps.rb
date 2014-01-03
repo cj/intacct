@@ -1,14 +1,8 @@
 module IntacctCustomerSteps
-  step 'I have a company' do
-    @company = OpenStruct.new({
-      id: current_random_id,
-      intacct_system_id: current_random_id,
-      name: 'RSpec Company'
-    })
-  end
+  step('I have a customer') { customer }
 
   step 'I create an Intacct Customer object' do
-    @intacct_customer = Intacct::Customer.new @company
+    @intacct_customer = Intacct::Customer.new customer
   end
 
   step 'I use the #create method' do
@@ -25,10 +19,6 @@ module IntacctCustomerSteps
 
   step 'I use the #destroy method' do
     @response = @intacct_customer.destroy
-  end
-
-  step 'I should recieve a sucessfull response' do
-    expect(@response).to be_true
   end
 
   step 'I should recieve "id, name and termname"' do

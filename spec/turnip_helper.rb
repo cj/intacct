@@ -7,3 +7,7 @@ step 'I have setup the correct settings' do
     config.app_password   = ENV['INTACCT_PASSWORD']
   end
 end
+
+step 'I should recieve a sucessfull response' do
+  expect(@response).to be_true
+end

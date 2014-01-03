@@ -1,6 +1,8 @@
 module Intacct
   class Invoice < Intacct::Base
     def create
+      return false if object.invoice.intacct_system_id.present?
+
       send_xml do |xml|
         xml.function(controlid: "1") {
           xml.create_invoice {
@@ -52,7 +54,7 @@ module Intacct
 
     def vendor_xml xml
       xml.name "#{!object.company_name.blank?? object.company_name : object.full_name}"
-      xml.vendtype "Appraiser" #TODO: Custom
+      xml.vendtype "Appraiser" # [todo]: Custom
       xml.taxid object.tax_id
       xml.billingtype "balanceforward"
       xml.status "active"
