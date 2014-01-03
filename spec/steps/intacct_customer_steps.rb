@@ -1,10 +1,16 @@
+require 'awesome_print'
+
 module IntacctCustomerSteps
-  attr_accessor :random_id
+  class << self
+    def random_id
+      return @random_id if @random_id
+      number = SecureRandom.random_number.to_s
+      @random_id = number[2..number.length]
+    end
+  end
 
   def current_random_id
-    return @random_id if @random_id
-    number = SecureRandom.random_number.to_s
-    @random_id = number[2..number.length]
+    IntacctCustomerSteps.random_id
   end
 
   step 'I have setup the correct settings' do
@@ -21,7 +27,7 @@ module IntacctCustomerSteps
     @company = OpenStruct.new({
       id: current_random_id,
       intacct_system_id: current_random_id,
-      name: 'Some Company'
+      name: 'RSpec Company'
     })
   end
 
@@ -29,7 +35,7 @@ module IntacctCustomerSteps
     @intacct_customer = Intacct::Customer.new @company
   end
 
-  step 'I use the #send method to submit the customer' do
+  step 'I use the #create method to submit the customer' do
     @response = @intacct_customer.create
   end
 
@@ -37,7 +43,15 @@ module IntacctCustomerSteps
     @response = @intacct_customer.get
   end
 
+  step 'I use the #destroy method' do
+    @response = @intacct_customer.destroy
+  end
+
   step 'I should recieve a sucessfull response' do
     expect(@response).to be_true
+  end
+
+  step 'I should recieve "id, name and termname"' do
+    expect(@response.keys).to include :id, :name, :termname
   end
 end

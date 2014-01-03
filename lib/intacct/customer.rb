@@ -27,23 +27,52 @@ module Intacct
       end
     end
 
-    def get
-      return false if customer.intacct_system_id.nil?
+    def get *fields
+      return {} if customer.intacct_system_id.nil?
+
+      fields = [
+        :customerid,
+        :name,
+        :termname
+      ] if fields.empty?
 
       @last_response = Intacct.send_xml do |xml|
         xml.function(controlid: "f4") {
           xml.get(object: "customer", key: "#{intacct_system_id}") {
             xml.fields {
-              xml.field "customerid"
-              xml.field "name"
-              xml.field "termname"
+              fields.each do |field|
+                xml.field field.to_s
+              end
             }
           }
         }
       end
 
       if last_response.at('//result//status') and last_response.at('//result//status').content=="success"
-        # Add hook to allow for log creating
+        #TODO: Add hook to allow for log creating
+
+        #return a hash of the intacct data
+        {
+          id: last_response.at("//customer//customerid").content,
+          name: last_response.at("//customer//name").content,
+          termname: last_response.at("//customer//termname").content
+        }
+      else
+        {}
+      end
+    end
+
+    def destroy
+      return false if customer.intacct_system_id.nil?
+
+      @last_response = Intacct.send_xml do |xml|
+        xml.function(controlid: "1") {
+          xml.delete_customer(customerid: intacct_system_id)
+        }
+      end
+
+      if last_response.at('//result//status') and last_response.at('//result//status').content=="success"
+
         true
       else
         false

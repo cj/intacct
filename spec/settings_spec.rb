@@ -16,6 +16,5 @@ describe 'Intacct Settings' do
     Intacct.setup do |config|
       config.sender_id = ENV['INTACCT_XML_SENDER_ID']
     end
-    binding.pry
   end
 end
