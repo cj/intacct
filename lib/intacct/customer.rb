@@ -16,7 +16,7 @@ module Intacct
     end
 
     def get *fields
-      return false if object.intacct_system_id.nil?
+      return false unless object.intacct_system_id.present?
 
       fields = [
         :customerid,
@@ -49,7 +49,7 @@ module Intacct
 
     def update updated_customer = false
       @object = updated_customer if updated_customer
-      return false if object.intacct_system_id.nil?
+      return false unless object.intacct_system_id.present?
 
       send_xml do |xml|
         xml.function(controlid: "1") {
@@ -65,7 +65,7 @@ module Intacct
     end
 
     def destroy
-      return false if object.intacct_system_id.nil?
+      return false unless object.intacct_system_id.present?
 
       @response = send_xml do |xml|
         xml.function(controlid: "1") {

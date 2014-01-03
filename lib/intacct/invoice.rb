@@ -51,8 +51,8 @@ module Intacct
 
 
     def vendor_xml xml
-      xml.name "#{object.company_name.present? ? object.company_name : object.full_name}"
-      xml.vendtype "Appraiser" #TODO: This is a custom type... how should we handle?
+      xml.name "#{!object.company_name.blank?? object.company_name : object.full_name}"
+      xml.vendtype "Appraiser" #TODO: Custom
       xml.taxid object.tax_id
       xml.billingtype "balanceforward"
       xml.status "active"
@@ -66,7 +66,7 @@ module Intacct
           xml.phone1 object.business_phone
           xml.cellphone object.cell_phone
           xml.email1 object.email
-          if object.billing_address.present?
+          unless object.billing_address.blank?
             xml.mailaddress {
               xml.address1 object.billing_address.address1
               xml.address2 object.billing_address.address2
@@ -77,8 +77,8 @@ module Intacct
           end
         }
       }
-      if object.ach_routing_number.present?
-        xml.achenabled "#{object.ach_routing_number.present? ? "true" : "false"}"
+      unless object.ach_routing_number.blank?
+        xml.achenabled "#{!object.ach_routing_number.blank?? "true" : "false"}"
         xml.achbankroutingnumber object.ach_routing_number
         xml.achaccountnumber object.ach_account_number
         xml.achaccounttype "#{object.ach_account_type.capitalize+" Account"}"

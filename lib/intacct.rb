@@ -1,8 +1,3 @@
-require 'rails'
-require "faker"
-require "pry"
-
-
 require "intacct/version"
 require 'net/http'
 require 'nokogiri'
@@ -10,6 +5,15 @@ require "intacct/base"
 require "intacct/customer"
 require "intacct/vendor"
 
+class Object
+  def blank?
+    respond_to?(:empty?) ? empty? : !self
+  end
+
+  def present?
+    !blank?
+  end
+end
 
 module Intacct
   extend self

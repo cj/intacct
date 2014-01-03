@@ -41,9 +41,7 @@ module IntacctVendorSteps
         address2: Faker::Address.secondary_address,
         city: Faker::Address.city,
         state: Faker::Address.state_abbr,
-        zipcode: Faker::Address.zip_code[0..4],
-        latitude: Faker::Address.latitude,
-        longitude: Faker::Address.longitude
+        zipcode: Faker::Address.zip_code[0..4]
       })
     })
   end

@@ -26,6 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "awesome_print"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "dotenv-rails"
-  spec.add_development_dependency "factory_girl_rails", ">= 4.3.0"
   spec.add_development_dependency "faker"
 end

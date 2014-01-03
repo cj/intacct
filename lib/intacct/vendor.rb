@@ -49,10 +49,9 @@ module Intacct
       "A#{object.intacct_system_id}"
     end
 
-
     def vendor_xml xml
       xml.name "#{object.company_name.present? ? object.company_name : object.full_name}"
-      xml.vendtype "Appraiser" #TODO: This is a custom type... how should we handle?
+      xml.vendtype "Appraiser" #TODO: CUSTOM
       xml.taxid object.tax_id
       xml.billingtype "balanceforward"
       xml.status "active"
@@ -85,6 +84,5 @@ module Intacct
         xml.achremittancetype "#{(object.ach_account_classification=="business" ? "CCD" : "PPD")}"
       end
     end
-
   end
 end
