@@ -35,19 +35,19 @@ module IntacctCustomerSteps
     @intacct_customer = Intacct::Customer.new @company
   end
 
-  step 'I use the #create' do
+  step 'I use the #create method' do
     @response = @intacct_customer.create
   end
 
-  step 'I use the #get' do
+  step 'I use the #get method' do
     @response = @intacct_customer.get
   end
 
-  step 'I use the #update' do
+  step 'I use the #update method' do
     @response = @intacct_customer.update
   end
 
-  step 'I use the #destroy' do
+  step 'I use the #destroy method' do
     @response = @intacct_customer.destroy
   end
 

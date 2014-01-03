@@ -7,7 +7,7 @@ Feature: Intacct Customer
     Then I create an Intacct Customer object
 
   Scenario Outline: It should "CRUD" a customer in Intacct
-    Given I use the #<method>
+    Given I use the #<method> method
     Then I should recieve a sucessfull response
 
     Examples:
