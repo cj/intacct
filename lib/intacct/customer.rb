@@ -3,7 +3,7 @@ require 'nokogiri'
 
 module Intacct
   class Customer < Struct.new(:customer, :current_user)
-    attr_accessor :last_response
+    attr_accessor :last_response, :data
 
     def create
       @last_response = Intacct.send_xml do |xml|
@@ -17,18 +17,11 @@ module Intacct
         }
       end
 
-      if last_response.at('//result//status') and last_response.at('//result//status').content=="success"
-        # client.intacct_system_id = intacct_customer_id
-        # client.intacct_updated_at = Time.now
-        # client.save!
-        true
-      else
-        false
-      end
+      successful?
     end
 
     def get *fields
-      return {} if customer.intacct_system_id.nil?
+      return false if customer.intacct_system_id.nil?
 
       fields = [
         :customerid,
@@ -48,18 +41,32 @@ module Intacct
         }
       end
 
-      if last_response.at('//result//status') and last_response.at('//result//status').content=="success"
-        #TODO: Add hook to allow for log creating
-
-        #return a hash of the intacct data
-        {
+      if successful?
+        @data = OpenStruct.new({
           id: last_response.at("//customer//customerid").content,
           name: last_response.at("//customer//name").content,
           termname: last_response.at("//customer//termname").content
-        }
-      else
-        {}
+        })
       end
+
+      successful?
+    end
+
+    def update updated_customer = false
+      @customer = updated_customer if updated_customer
+      return false if customer.intacct_system_id.nil?
+
+      @last_response = Intacct.send_xml do |xml|
+        xml.function(controlid: "1") {
+          xml.update_customer(customerid: intacct_system_id) {
+            xml.name customer.name
+            xml.comments
+            xml.status "active"
+          }
+        }
+      end
+
+      successful?
     end
 
     def destroy
@@ -71,12 +78,7 @@ module Intacct
         }
       end
 
-      if last_response.at('//result//status') and last_response.at('//result//status').content=="success"
-
-        true
-      else
-        false
-      end
+      successful?
     end
 
     def intacct_customer_id
@@ -85,6 +87,16 @@ module Intacct
 
     def intacct_system_id
       "C#{customer.intacct_system_id}"
+    end
+
+    private
+
+    def successful?
+      if last_response.at('//result//status') and last_response.at('//result//status').content=="success"
+        true
+      else
+        false
+      end
     end
   end
 end
