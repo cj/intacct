@@ -51,7 +51,8 @@ module Intacct
 
     def vendor_xml xml
       xml.name "#{object.company_name.present? ? object.company_name : object.full_name}"
-      xml.vendtype "Appraiser" #TODO: CUSTOM
+      #[todo] - Custom
+      xml.vendtype "Appraiser"
       xml.taxid object.tax_id
       xml.billingtype "balanceforward"
       xml.status "active"

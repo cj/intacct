@@ -1,5 +1,7 @@
 module Intacct
   class Base < Struct.new(:object, :current_user)
+    include Hooks
+
     attr_accessor :response, :data
 
     def initialize *params

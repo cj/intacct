@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "nokogiri"
+  spec.add_dependency "hooks"
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
@@ -26,5 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "awesome_print"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "dotenv-rails"
-  spec.add_development_dependency "faker"
+  spec.add_development_dependency "faker", ">=1.2.0"
 end
