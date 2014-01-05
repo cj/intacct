@@ -4,7 +4,7 @@ module Intacct
       send_xml do |xml|
         xml.function(controlid: "1") {
           xml.send("create_customer") {
-            xml.customerid intacct_customer_id
+            xml.customerid intacct_object_id
             xml.name object.name
             xml.comments
             xml.status "active"
@@ -76,12 +76,8 @@ module Intacct
       successful?
     end
 
-    def intacct_customer_id
+    def intacct_object_id
       "C#{object.id}"
-    end
-
-    def intacct_system_id
-      "C#{object.intacct_system_id}"
     end
   end
 end

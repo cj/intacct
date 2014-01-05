@@ -5,6 +5,23 @@ module Intacct
     def create
       return false if object.invoice.intacct_system_id.present?
 
+      # Need to create the customer if one doesn't exist
+      unless object.customer.intacct_system_id
+        intacct_customer = Intacct::Customer.new object.customer
+        intacct_customer.create
+        if intacct_customer.get
+          object.customer.intacct_data = OpenStruct.new intacct_customer.data
+        else
+          raise 'Could not grab Intacct customer data'
+        end
+      end
+
+      # Create vendor if we have one and not in Intacct
+      if object.vendor and object.vendor.intacct_system_id.blank?
+        intacct_vendor = Intacct::Vendor.new object.vendor
+        intacct_vendor.create
+      end
+
       send_xml do |xml|
         xml.function(controlid: "f1") {
           xml.send("create_invoice") {
@@ -16,40 +33,20 @@ module Intacct
       successful?
     end
 
-    def update updated_vendor = false
-      @object = updated_vendor if updated_vendor
-      return false if object.intacct_system_id.nil?
-
+    def destroy
+      return false unless object.invoice.intacct_system_id.present?
 
       send_xml do |xml|
         xml.function(controlid: "1") {
-          xml.update_vendor(vendorid: intacct_system_id) {
-            vendor_xml xml
-          }
+          xml.delete_invoice(externalkey: "false", key: object.invoice.intacct_key)
         }
       end
 
       successful?
     end
 
-    def destroy
-      return false if object.intacct_system_id.nil?
-
-      @response = send_xml do |xml|
-        xml.function(controlid: "1") {
-          xml.delete_vendor(vendorid: intacct_system_id)
-        }
-      end
-
-      successful?
-    end
-
-    def intacct_invoice_id
-      "A#{object.invoice.id}"
-    end
-
-    def intacct_system_id
-      "A#{object.invoice.intacct_system_id}"
+    def intacct_object_id
+      "AUTO-#{object.invoice.id}"
     end
 
     def invoice_xml xml
@@ -59,8 +56,16 @@ module Intacct
         xml.month object.invoice.date_time_created.strftime("%m")
         xml.day object.invoice.date_time_created.strftime("%d")
       }
-      xml.invoiceno intacct_invoice_id
+
+      termname = object.customer.intacct_data.termname
+      xml.termname termname.present?? termname : "Net 30"
+
+      xml.invoiceno intacct_object_id
       run_hook :custom_invoice_fields, xml
+    end
+
+    def set_intacct_key key
+      object.invoice.intacct_key = key
     end
   end
 end

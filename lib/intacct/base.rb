@@ -47,10 +47,26 @@ module Intacct
 
     def successful?
       if status = response.at('//result//status') and status.content == "success"
+        set_intacct_system_id
+        if key = response.at('//result//key')
+          set_intacct_key key.content
+        end
         true
       else
         false
       end
+    end
+
+    def intacct_system_id
+      intacct_object_id
+    end
+
+    def set_intacct_system_id
+      object.intacct_system_id = intacct_object_id
+    end
+
+    def set_intacct_key key
+      object.intacct_key = key
     end
   end
 end

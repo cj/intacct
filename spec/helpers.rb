@@ -21,6 +21,18 @@ module Helpers
     })
   end
 
+  def person
+    fields = {
+      full_name: Faker::Name.name,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name,
+    }
+
+    fields.merge! yield if block_given?
+
+    OpenStruct.new fields
+  end
+
   def customer
     @customer ||= OpenStruct.new({
       id: current_random_id,
@@ -51,21 +63,28 @@ module Helpers
       id: current_random_id,
       intacct_system_id: current_random_id,
       date_time_created: DateTime.now,
+      mileage_miles: Faker::Number.number(3),
+      mileage_rate: Faker::Number.number(2),
+      mileage_fee: Faker::Number.number(2),
+      base_fee: Faker::Number.number(2),
+      additional_fee: Faker::Number.number(2),
+      note: Faker::Lorem.words,
+      creator: person,
       claim: OpenStruct.new({
         dlnumber: Faker::Number.number(6),
         claimnumber: Faker::Number.number(6),
         appraisal_type: 'auto',
         insured_full_name: Faker::Name.name,
+        appraiser_driving_distance: Faker::Number.number(2),
+        dtcreated: DateTime.now,
         vehicle: OpenStruct.new({
           year: 2001,
           make: Faker::Name.name,
           model: 'A1',
           address: address
         }),
-        owner: OpenStruct.new({
-          insuredorclaimant: 'INSURED',
-          full_name: Faker::Name.name
-        })
+        owner: person { {insuredorclaimant: 'INSURED' } },
+        adjuster: person
       })
     })
   end

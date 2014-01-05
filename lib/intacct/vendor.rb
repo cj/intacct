@@ -4,7 +4,7 @@ module Intacct
       send_xml do |xml|
         xml.function(controlid: "1") {
           xml.create_vendor {
-            xml.vendorid intacct_vendor_id
+            xml.vendorid intacct_object_id
             vendor_xml xml
           }
         }
@@ -41,12 +41,8 @@ module Intacct
       successful?
     end
 
-    def intacct_vendor_id
+    def intacct_object_id
       "A#{object.id}"
-    end
-
-    def intacct_system_id
-      "A#{object.intacct_system_id}"
     end
 
     def vendor_xml xml
