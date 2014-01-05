@@ -47,7 +47,12 @@ module Intacct
 
     def successful?
       if status = response.at('//result//status') and status.content == "success"
-        set_intacct_system_id
+        if response.at('//result//function').content.scan(/delete/).empty?
+          set_intacct_system_id
+        else
+          destroy_intacct_system_id
+        end
+
         if key = response.at('//result//key')
           set_intacct_key key.content
         end
@@ -63,6 +68,10 @@ module Intacct
 
     def set_intacct_system_id
       object.intacct_system_id = intacct_object_id
+    end
+
+    def destroy_intacct_system_id
+      object.intacct_system_id = nil
     end
 
     def set_intacct_key key
