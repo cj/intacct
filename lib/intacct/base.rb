@@ -66,7 +66,7 @@ module Intacct
     end
 
     def set_intacct_key key
-      object.intacct_key = key
+      object.intacct_key = key if object.respond_to? :intacct_key
     end
   end
 end
