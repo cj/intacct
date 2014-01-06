@@ -68,7 +68,7 @@ module Intacct
       object.invoice.intacct_key = key
     end
 
-    def destroy_intacct_system_id
+    def delete_intacct_system_id
       object.invoice.intacct_system_id = nil
     end
   end

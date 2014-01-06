@@ -1,6 +1,9 @@
 module Intacct
   class Base < Struct.new(:object, :current_user)
     include Hooks
+    define_hook :after_create, :after_update, :after_delete, :after_get
+    after_create :set_intacct_system_id
+    after_delete :delete_intacct_system_id
 
     attr_accessor :response, :data
 
@@ -43,19 +46,21 @@ module Intacct
 
       res = Net::HTTP.post_form(uri, 'xmlrequest' => xml)
       @response = Nokogiri::XML(res.body)
-    end
-
-    def successful?
-      if status = response.at('//result//status') and status.content == "success"
-        if response.at('//result//function').content.scan(/delete/).empty?
-          set_intacct_system_id
-        else
-          destroy_intacct_system_id
+      if successful?
+        function = response.at('//result//function').content
+        if type = function[/(create|update|get|delete)/]
+          run_hook :"after_#{type}"
         end
 
         if key = response.at('//result//key')
           set_intacct_key key.content
         end
+      end
+      @response
+    end
+
+    def successful?
+      if status = response.at('//result//status') and status.content == "success"
         true
       else
         false
@@ -70,7 +75,7 @@ module Intacct
       object.intacct_system_id = intacct_object_id
     end
 
-    def destroy_intacct_system_id
+    def delete_intacct_system_id
       object.intacct_system_id = nil
     end
 
