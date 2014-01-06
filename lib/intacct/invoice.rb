@@ -1,5 +1,6 @@
 module Intacct
   class Invoice < Intacct::Base
+    attr_accessor :customer_data
     define_hook :custom_invoice_fields
 
     def create
@@ -10,7 +11,7 @@ module Intacct
         intacct_customer = Intacct::Customer.new object.customer
         intacct_customer.create
         if intacct_customer.get
-          object.customer.intacct_data = OpenStruct.new intacct_customer.data
+          @customer_data = intacct_customer.data
         else
           raise 'Could not grab Intacct customer data'
         end
@@ -57,7 +58,7 @@ module Intacct
         xml.day object.invoice.date_time_created.strftime("%d")
       }
 
-      termname = object.customer.intacct_data.termname
+      termname = customer_data.termname
       xml.termname termname.present?? termname : "Net 30"
 
       xml.invoiceno intacct_object_id
