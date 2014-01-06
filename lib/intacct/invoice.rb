@@ -65,6 +65,10 @@ module Intacct
       run_hook :custom_invoice_fields, xml
     end
 
+    def set_intacct_system_id
+      object.invoice.intacct_system_id = intacct_object_id
+    end
+
     def set_intacct_key key
       object.invoice.intacct_key = key
     end
