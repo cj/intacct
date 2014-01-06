@@ -23,6 +23,8 @@ module Intacct
         intacct_vendor = Intacct::Vendor.new object.vendor
         if intacct_vendor.create
           object.vendor = intacct_vendor.object
+        else
+          raise 'Could not create vendor'
         end
       end
 
