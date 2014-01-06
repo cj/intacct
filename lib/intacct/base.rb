@@ -14,6 +14,16 @@ module Intacct
       super(*params)
     end
 
+    protected
+
+    def successful?
+      if status = response.at('//result//status') and status.content == "success"
+        true
+      else
+        false
+      end
+    end
+
     private
 
     def send_xml
@@ -60,14 +70,6 @@ module Intacct
         end
       end
       @response
-    end
-
-    def successful?
-      if status = response.at('//result//status') and status.content == "success"
-        true
-      else
-        false
-      end
     end
 
     def intacct_system_id
