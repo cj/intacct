@@ -4,6 +4,7 @@ module Intacct
     define_hook :after_create, :after_update, :after_delete, :after_get
     after_create :set_intacct_system_id
     after_delete :delete_intacct_system_id
+    after_send_xml :set_date_time
 
     attr_accessor :response, :data
 
@@ -49,7 +50,8 @@ module Intacct
       if successful?
         function = response.at('//result//function').content
         if type = function[/(create|update|get|delete)/]
-          run_hook :"after_#{type}"
+          run_hook :after_send_xml, type
+          run_hook :"after_#{type}", type
         end
 
         if key = response.at('//result//key')
@@ -81,6 +83,14 @@ module Intacct
 
     def set_intacct_key key
       object.intacct_key = key if object.respond_to? :intacct_key
+    end
+
+    def set_date_time type
+      if %w(create update delete).include? type
+        if object.respond_to? :"intacct_#{type}d_at"
+          object.send("intacct_#{type}d_at=", DateTime.now)
+        end
+      end
     end
   end
 end

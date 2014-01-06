@@ -71,5 +71,13 @@ module Intacct
     def delete_intacct_system_id
       object.invoice.intacct_system_id = nil
     end
+
+    def set_date_time type
+      if %w(create update delete).include? type
+        if object.invoice.respond_to? :"intacct_#{type}d_at"
+          object.invoice.send("intacct_#{type}d_at=", DateTime.now)
+        end
+      end
+    end
   end
 end
