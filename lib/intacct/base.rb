@@ -1,7 +1,8 @@
 module Intacct
   class Base < Struct.new(:object, :current_user)
     include Hooks
-    define_hook :after_create, :after_update, :after_delete, :after_get
+    define_hook :after_create, :after_update, :after_delete,
+      :after_get, :after_send_xml
     after_create :set_intacct_system_id
     after_delete :delete_intacct_system_id
     after_send_xml :set_date_time
@@ -51,7 +52,7 @@ module Intacct
         function = response.at('//result//function').content
         if type = function[/(create|update|get|delete)/]
           run_hook :after_send_xml, type
-          run_hook :"after_#{type}", type
+          run_hook :"after_#{type}"
         end
 
         if key = response.at('//result//key')
