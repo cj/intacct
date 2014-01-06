@@ -13,8 +13,8 @@ module IntacctVendorSteps
     @response = @intacct_vendor.update
   end
 
-  step 'I use the #destroy method' do
-    @response = @intacct_vendor.destroy
+  step 'I use the #delete method' do
+    @response = @intacct_vendor.delete
   end
 
   step 'I should recieve "id, name and termname"' do

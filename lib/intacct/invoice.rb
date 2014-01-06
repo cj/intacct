@@ -33,7 +33,7 @@ module Intacct
       successful?
     end
 
-    def destroy
+    def delete
       return false unless object.invoice.intacct_system_id.present?
 
       send_xml do |xml|

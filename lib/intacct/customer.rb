@@ -64,7 +64,7 @@ module Intacct
       successful?
     end
 
-    def destroy
+    def delete
       return false unless object.intacct_system_id.present?
 
       @response = send_xml do |xml|

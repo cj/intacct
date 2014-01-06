@@ -14,4 +14,4 @@ Feature: Intacct Invoice
     Examples:
       | method  |
       | create  |
-      | destroy |
+      | delete |

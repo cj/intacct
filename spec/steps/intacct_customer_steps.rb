@@ -17,8 +17,8 @@ module IntacctCustomerSteps
     @response = @intacct_customer.update
   end
 
-  step 'I use the #destroy method' do
-    @response = @intacct_customer.destroy
+  step 'I use the #delete method' do
+    @response = @intacct_customer.delete
   end
 
   step 'I should recieve "id, name and termname"' do

@@ -14,4 +14,4 @@ Feature: Intacct Vendor
       | method  |
       | create  |
       | update  |
-      | destroy |
+      | delete |

@@ -11,8 +11,8 @@ Feature: Intacct Customer
     Then I should recieve a sucessfull response
 
     Examples:
-      | method  |
-      | create  |
-      | update  |
-      | get     |
-      | destroy |
+      | method |
+      | create |
+      | update |
+      | get    |
+      | delete |

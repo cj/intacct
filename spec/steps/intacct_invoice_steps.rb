@@ -27,12 +27,12 @@ module IntacctInvoiceSteps
     IntacctInvoiceSteps.intacct_key = @intacct_invoice.object.invoice.intacct_key
   end
 
-  step 'I use the #destroy method' do
+  step 'I use the #delete method' do
     @intacct_invoice.object.invoice.intacct_key = IntacctInvoiceSteps.intacct_key
-    @response = @intacct_invoice.destroy
+    @response = @intacct_invoice.delete
     if @response
-      Intacct::Customer.new(@intacct_invoice.object.customer).destroy
-      Intacct::Vendor.new(@intacct_invoice.object.vendor).destroy
+      Intacct::Customer.new(@intacct_invoice.object.customer).delete
+      Intacct::Vendor.new(@intacct_invoice.object.vendor).delete
     end
   end
 
