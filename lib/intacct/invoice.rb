@@ -11,6 +11,7 @@ module Intacct
         intacct_customer = Intacct::Customer.new object.customer
         intacct_customer.create
         if intacct_customer.get
+          object.customer = intacct_customer.object
           @customer_data = intacct_customer.data
         else
           raise 'Could not grab Intacct customer data'
@@ -20,7 +21,9 @@ module Intacct
       # Create vendor if we have one and not in Intacct
       if object.vendor and object.vendor.intacct_system_id.blank?
         intacct_vendor = Intacct::Vendor.new object.vendor
-        intacct_vendor.create
+        if intacct_vendor.create
+          object.vendor = intacct_vendor.object
+        end
       end
 
       send_xml do |xml|
