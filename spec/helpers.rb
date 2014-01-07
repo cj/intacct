@@ -58,6 +58,15 @@ module Helpers
     })
   end
 
+  def payment
+    @payment ||= OpenStruct.new(invoice.to_h.merge({
+      type: 'some_type',
+      date_time_paid: DateTime.now,
+      base_amt: Faker::Number.number(2),
+      additional_amt: Faker::Number.number(2)
+    }))
+  end
+
   def invoice
     @invoice ||= OpenStruct.new({
       id: current_random_id,

@@ -6,6 +6,7 @@ require "intacct/base"
 require "intacct/customer"
 require "intacct/vendor"
 require "intacct/invoice"
+require "intacct/bill"
 
 class Object
   def blank?

@@ -48,6 +48,7 @@ module Intacct
 
       res = Net::HTTP.post_form(uri, 'xmlrequest' => xml)
       @response = Nokogiri::XML(res.body)
+
       if successful?
         function = response.at('//result//function').content
         if type = function[/(create|update|get|delete)/]
@@ -59,6 +60,7 @@ module Intacct
           set_intacct_key key.content
         end
       end
+
       @response
     end
 
