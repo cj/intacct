@@ -11,7 +11,7 @@ module Intacct
     after_delete :delete_intacct_key
     after_send_xml :set_date_time
 
-    attr_accessor :response, :data, :sent_xml
+    attr_accessor :response, :data, :sent_xml, :intacct_action
 
     def initialize *params
       params[0] = OpenStruct.new(params[0]) if params[0].is_a? Hash
@@ -54,15 +54,17 @@ module Intacct
       res = Net::HTTP.post_form(uri, 'xmlrequest' => xml)
       @response = Nokogiri::XML(res.body)
 
+      function = response.at('//result//function').content
+      @intacct_action = function[/(create|update|get|delete)/]
+
       if successful?
         if key = response.at('//result//key')
           set_intacct_key key.content
         end
 
-        function = response.at('//result//function').content
-        if type = function[/(create|update|get|delete)/]
-          run_hook :after_send_xml, type
-          run_hook :"after_#{type}"
+        if intacct_action
+          run_hook :after_send_xml, intacct_action
+          run_hook :"after_#{intacct_action}"
         end
       else
         run_hook :on_error
