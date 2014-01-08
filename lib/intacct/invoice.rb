@@ -7,15 +7,16 @@ module Intacct
       return false if object.invoice.intacct_system_id.present?
 
       # Need to create the customer if one doesn't exist
+      intacct_customer = Intacct::Customer.new object.customer
       unless object.customer.intacct_system_id.present?
-        intacct_customer = Intacct::Customer.new object.customer
         intacct_customer.create
-        if intacct_customer.get
-          object.customer = intacct_customer.object
-          @customer_data = intacct_customer.data
-        else
-          raise 'Could not grab Intacct customer data'
-        end
+      end
+
+      if intacct_customer.get
+        object.customer = intacct_customer.object
+        @customer_data = intacct_customer.data
+      else
+        raise 'Could not grab Intacct customer data'
       end
 
       # Create vendor if we have one and not in Intacct
