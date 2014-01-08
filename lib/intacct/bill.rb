@@ -93,6 +93,10 @@ module Intacct
       object.payment.intacct_system_id = nil
     end
 
+    def delete_intacct_key
+      object.payment.intacct_key = nil
+    end
+
     def set_date_time type
       if %w(create update delete).include? type
         if object.payment.respond_to? :"intacct_#{type}d_at"

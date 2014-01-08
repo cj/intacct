@@ -5,6 +5,7 @@ module Intacct
       :after_get, :after_send_xml
     after_create :set_intacct_system_id
     after_delete :delete_intacct_system_id
+    after_delete :delete_intacct_key
     after_send_xml :set_date_time
 
     attr_accessor :response, :data
@@ -50,14 +51,14 @@ module Intacct
       @response = Nokogiri::XML(res.body)
 
       if successful?
+        if key = response.at('//result//key')
+          set_intacct_key key.content
+        end
+
         function = response.at('//result//function').content
         if type = function[/(create|update|get|delete)/]
           run_hook :after_send_xml, type
           run_hook :"after_#{type}"
-        end
-
-        if key = response.at('//result//key')
-          set_intacct_key key.content
         end
       end
 
@@ -86,6 +87,10 @@ module Intacct
 
     def set_intacct_key key
       object.intacct_key = key if object.respond_to? :intacct_key
+    end
+
+    def delete_intacct_key
+      object.intacct_key = nil if object.respond_to? :intacct_key
     end
 
     def set_date_time type

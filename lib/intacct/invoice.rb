@@ -7,7 +7,7 @@ module Intacct
       return false if object.invoice.intacct_system_id.present?
 
       # Need to create the customer if one doesn't exist
-      unless object.customer.intacct_system_id
+      unless object.customer.intacct_system_id.present?
         intacct_customer = Intacct::Customer.new object.customer
         intacct_customer.create
         if intacct_customer.get
@@ -80,6 +80,10 @@ module Intacct
 
     def delete_intacct_system_id
       object.invoice.intacct_system_id = nil
+    end
+
+    def delete_intacct_key
+      object.invoice.intacct_key = nil
     end
 
     def set_date_time type
