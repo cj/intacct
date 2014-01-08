@@ -2,13 +2,13 @@ module Intacct
   class Base < Struct.new(:object, :current_user)
     include Hooks
     define_hook :after_create, :after_update, :after_delete,
-      :after_get, :after_send_xml
+      :after_get, :after_send_xml, :on_error
     after_create :set_intacct_system_id
     after_delete :delete_intacct_system_id
     after_delete :delete_intacct_key
     after_send_xml :set_date_time
 
-    attr_accessor :response, :data
+    attr_accessor :response, :data, :sent_xml
 
     def initialize *params
       params[0] = OpenStruct.new(params[0]) if params[0].is_a? Hash
@@ -43,6 +43,7 @@ module Intacct
       end
 
       xml = builder.doc.root.to_xml
+      @sent_xml = xml
 
       url = "https://www.intacct.com/ia/xml/xmlgw.phtml"
       uri = URI(url)
@@ -60,6 +61,8 @@ module Intacct
           run_hook :after_send_xml, type
           run_hook :"after_#{type}"
         end
+      else
+        run_hook :on_error
       end
 
       @response

@@ -30,7 +30,7 @@ module Intacct
 
       send_xml do |xml|
         xml.function(controlid: "f1") {
-          xml.send("create_invoice") {
+          xml.create_invoice {
             invoice_xml xml
           }
         }
