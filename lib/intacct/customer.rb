@@ -1,7 +1,7 @@
 module Intacct
   class Customer < Intacct::Base
     def create
-      send_xml do |xml|
+      send_xml('create') do |xml|
         xml.function(controlid: "1") {
           xml.send("create_customer") {
             xml.customerid intacct_object_id
@@ -24,7 +24,7 @@ module Intacct
         :termname
       ] if fields.empty?
 
-      send_xml do |xml|
+      send_xml('get') do |xml|
         xml.function(controlid: "f4") {
           xml.get(object: "customer", key: "#{intacct_system_id}") {
             xml.fields {
@@ -51,7 +51,7 @@ module Intacct
       @object = updated_customer if updated_customer
       return false unless object.intacct_system_id.present?
 
-      send_xml do |xml|
+      send_xml('update') do |xml|
         xml.function(controlid: "1") {
           xml.update_customer(customerid: intacct_system_id) {
             xml.name object.name
@@ -67,7 +67,7 @@ module Intacct
     def delete
       return false unless object.intacct_system_id.present?
 
-      @response = send_xml do |xml|
+      @response = send_xml('delete') do |xml|
         xml.function(controlid: "1") {
           xml.delete_customer(customerid: intacct_system_id)
         }

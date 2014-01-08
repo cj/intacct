@@ -9,11 +9,7 @@ module Intacct
       # Need to create the customer if one doesn't exist
       unless object.customer.intacct_system_id
         intacct_customer = Intacct::Customer.new object.customer
-        intacct_customer.create
-        if intacct_customer.get
-          object.customer = intacct_customer.object
-          @customer_data = intacct_customer.data
-        else
+        unless intacct_customer.create
           raise 'Could not grab Intacct customer data'
         end
       end
@@ -28,7 +24,7 @@ module Intacct
         end
       end
 
-      send_xml do |xml|
+      send_xml('create') do |xml|
         xml.function(controlid: "f1") {
           xml.send("create_bill") {
             bill_xml xml
@@ -42,7 +38,7 @@ module Intacct
     def delete
       return false unless object.payment.intacct_system_id.present?
 
-      send_xml do |xml|
+      send_xml('delete') do |xml|
         xml.function(controlid: "1") {
           xml.delete_bill(externalkey: "false", key: object.payment.intacct_key)
         }
@@ -58,25 +54,20 @@ module Intacct
     def bill_xml xml
       xml.vendorid object.vendor.intacct_system_id
       xml.datecreated {
-        xml.year object.payment.date_time_created.strftime("%Y")
-        xml.month object.payment.date_time_created.strftime("%m")
-        xml.day object.payment.date_time_created.strftime("%d")
+        xml.year object.payment.created_at.strftime("%Y")
+        xml.month object.payment.created_at.strftime("%m")
+        xml.day object.payment.created_at.strftime("%d")
       }
       xml.dateposted {
-        xml.year object.payment.date_time_created.strftime("%Y")
-        xml.month object.payment.date_time_created.strftime("%m")
-        xml.day object.payment.date_time_created.strftime("%d")
+        xml.year object.payment.created_at.strftime("%Y")
+        xml.month object.payment.created_at.strftime("%m")
+        xml.day object.payment.created_at.strftime("%d")
       }
       xml.datedue {
-        xml.year object.payment.date_time_paid.strftime("%Y")
-        xml.month object.payment.date_time_paid.strftime("%m")
-        xml.day object.payment.date_time_paid.strftime("%d")
+        xml.year object.payment.paid_at.strftime("%Y")
+        xml.month object.payment.paid_at.strftime("%m")
+        xml.day object.payment.paid_at.strftime("%d")
       }
-      xml.billno "AUTO-#{object.payment.id}" #intact bill id
-      xml.externalid "AUTO-#{object.payment.id}"
-      xml.basecurr "USD"
-      xml.currency "USD"
-      xml.exchratetype "Intacct Daily Rate"
       run_hook :custom_bill_fields, xml
       run_hook :bill_item_fields, xml
     end

@@ -1,7 +1,7 @@
 module Intacct
   class Vendor < Intacct::Base
     def create
-      send_xml do |xml|
+      send_xml('create') do |xml|
         xml.function(controlid: "1") {
           xml.create_vendor {
             xml.vendorid intacct_object_id
@@ -18,7 +18,7 @@ module Intacct
       return false if object.intacct_system_id.nil?
 
 
-      send_xml do |xml|
+      send_xml('update') do |xml|
         xml.function(controlid: "1") {
           xml.update_vendor(vendorid: intacct_system_id) {
             vendor_xml xml
@@ -32,7 +32,7 @@ module Intacct
     def delete
       return false if object.intacct_system_id.nil?
 
-      @response = send_xml do |xml|
+      @response = send_xml('delete') do |xml|
         xml.function(controlid: "1") {
           xml.delete_vendor(vendorid: intacct_system_id)
         }

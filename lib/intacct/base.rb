@@ -4,7 +4,7 @@ module Intacct
     include Hooks::InstanceHooks
 
     define_hook :after_create, :after_update, :after_delete,
-      :after_get, :after_send_xml, :on_error
+      :after_get, :after_send_xml, :on_error, :before_create
 
     after_create :set_intacct_system_id
     after_delete :delete_intacct_system_id
@@ -20,7 +20,10 @@ module Intacct
 
     private
 
-    def send_xml
+    def send_xml action
+      @intacct_action = action
+      run_hook :"before_#{intacct_action}"
+
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.request {
           xml.control {
@@ -53,9 +56,6 @@ module Intacct
 
       res = Net::HTTP.post_form(uri, 'xmlrequest' => xml)
       @response = Nokogiri::XML(res.body)
-
-      function = response.at('//result//function').content
-      @intacct_action = function[/(create|update|get|delete)/]
 
       if successful?
         if key = response.at('//result//key')

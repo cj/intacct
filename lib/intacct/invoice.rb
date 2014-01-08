@@ -9,7 +9,9 @@ module Intacct
       # Need to create the customer if one doesn't exist
       intacct_customer = Intacct::Customer.new object.customer
       unless object.customer.intacct_system_id.present?
-        intacct_customer.create
+        unless intacct_customer.create
+          raise 'Could not create customer'
+        end
       end
 
       if intacct_customer.get
@@ -29,7 +31,7 @@ module Intacct
         end
       end
 
-      send_xml do |xml|
+      send_xml('create') do |xml|
         xml.function(controlid: "f1") {
           xml.create_invoice {
             invoice_xml xml
@@ -43,7 +45,7 @@ module Intacct
     def delete
       return false unless object.invoice.intacct_system_id.present?
 
-      send_xml do |xml|
+      send_xml('delete') do |xml|
         xml.function(controlid: "1") {
           xml.delete_invoice(externalkey: "false", key: object.invoice.intacct_key)
         }
