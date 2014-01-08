@@ -21,8 +21,8 @@ module Intacct
     private
 
     def send_xml action
-      @intacct_action = action
-      run_hook :"before_#{intacct_action}"
+      @intacct_action = action.to_s
+      run_hook :"before_#{intacct_action}" if action=="create"
 
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.request {
