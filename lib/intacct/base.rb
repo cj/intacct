@@ -4,14 +4,14 @@ module Intacct
     include Hooks::InstanceHooks
 
     define_hook :after_create, :after_update, :after_delete,
-      :after_get, :after_send_xml, :on_error
+      :after_get, :after_send_xml, :on_error, :before_create
 
     after_create :set_intacct_system_id
     after_delete :delete_intacct_system_id
     after_delete :delete_intacct_key
     after_send_xml :set_date_time
 
-    attr_accessor :response, :data, :sent_xml
+    attr_accessor :response, :data, :sent_xml, :intacct_action
 
     def initialize *params
       params[0] = OpenStruct.new(params[0]) if params[0].is_a? Hash
@@ -20,7 +20,10 @@ module Intacct
 
     private
 
-    def send_xml
+    def send_xml action
+      @intacct_action = action.to_s
+      run_hook :"before_#{intacct_action}" if action=="create"
+
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.request {
           xml.control {
@@ -59,10 +62,9 @@ module Intacct
           set_intacct_key key.content
         end
 
-        function = response.at('//result//function').content
-        if type = function[/(create|update|get|delete)/]
-          run_hook :after_send_xml, type
-          run_hook :"after_#{type}"
+        if intacct_action
+          run_hook :after_send_xml, intacct_action
+          run_hook :"after_#{intacct_action}"
         end
       else
         run_hook :on_error

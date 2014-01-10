@@ -7,15 +7,18 @@ module Intacct
       return false if object.invoice.intacct_system_id.present?
 
       # Need to create the customer if one doesn't exist
+      intacct_customer = Intacct::Customer.new object.customer
       unless object.customer.intacct_system_id.present?
-        intacct_customer = Intacct::Customer.new object.customer
-        intacct_customer.create
-        if intacct_customer.get
-          object.customer = intacct_customer.object
-          @customer_data = intacct_customer.data
-        else
-          raise 'Could not grab Intacct customer data'
+        unless intacct_customer.create
+          raise 'Could not create customer'
         end
+      end
+
+      if intacct_customer.get
+        object.customer = intacct_customer.object
+        @customer_data = intacct_customer.data
+      else
+        raise 'Could not grab Intacct customer data'
       end
 
       # Create vendor if we have one and not in Intacct
@@ -28,7 +31,7 @@ module Intacct
         end
       end
 
-      send_xml do |xml|
+      send_xml('create') do |xml|
         xml.function(controlid: "f1") {
           xml.create_invoice {
             invoice_xml xml
@@ -42,7 +45,7 @@ module Intacct
     def delete
       return false unless object.invoice.intacct_system_id.present?
 
-      send_xml do |xml|
+      send_xml('delete') do |xml|
         xml.function(controlid: "1") {
           xml.delete_invoice(externalkey: "false", key: object.invoice.intacct_key)
         }
