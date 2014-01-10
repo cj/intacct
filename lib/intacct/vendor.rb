@@ -42,7 +42,7 @@ module Intacct
     end
 
     def intacct_object_id
-      "A#{object.id}"
+      "#{intacct_vendor_prefix}#{object.id}"
     end
 
     def vendor_xml xml

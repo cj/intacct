@@ -52,7 +52,7 @@ module Intacct
     end
 
     def intacct_object_id
-      "AUTO-#{object.payment.id}"
+      "#{intacct_bill_prefix}#{object.payment.id}"
     end
 
     def bill_xml xml
@@ -72,8 +72,8 @@ module Intacct
         xml.month object.payment.date_time_paid.strftime("%m")
         xml.day object.payment.date_time_paid.strftime("%d")
       }
-      xml.billno "AUTO-#{object.payment.id}" #intact bill id
-      xml.externalid "AUTO-#{object.payment.id}"
+      xml.billno "#{intacct_bill_prefix}#{object.payment.id}" #intact bill id
+      xml.externalid "#{intacct_bill_prefix}#{object.payment.id}"
       xml.basecurr "USD"
       xml.currency "USD"
       xml.exchratetype "Intacct Daily Rate"

@@ -77,7 +77,7 @@ module Intacct
     end
 
     def intacct_object_id
-      "C#{object.id}"
+      "#{intacct_customer_prefix}#{object.id}"
     end
   end
 end

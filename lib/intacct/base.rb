@@ -79,6 +79,12 @@ module Intacct
       end
     end
 
+    %w(invoice bill vendor customer).each do |type|
+      define_method "intacct_#{type}_prefix" do
+        Intacct.send("#{type}_prefix")
+      end
+    end
+
     def intacct_system_id
       intacct_object_id
     end

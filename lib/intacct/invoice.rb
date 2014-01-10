@@ -52,7 +52,7 @@ module Intacct
     end
 
     def intacct_object_id
-      "AUTO-#{object.invoice.id}"
+      "#{intacct_invoice_prefix}#{object.invoice.id}"
     end
 
     def invoice_xml xml
