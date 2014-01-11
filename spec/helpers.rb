@@ -61,7 +61,7 @@ module Helpers
   def payment
     @payment ||= OpenStruct.new(invoice.to_h.merge({
       type: 'some_type',
-      date_time_paid: DateTime.now,
+      paid_at: DateTime.now,
       base_amt: Faker::Number.number(2),
       additional_amt: Faker::Number.number(2)
     }))
@@ -71,7 +71,7 @@ module Helpers
     @invoice ||= OpenStruct.new({
       id: current_random_id,
       intacct_system_id: current_random_id,
-      date_time_created: DateTime.now,
+      created_at: DateTime.now,
       mileage_miles: Faker::Number.number(3),
       mileage_rate: Faker::Number.number(2),
       mileage_fee: Faker::Number.number(2),
@@ -100,6 +100,10 @@ module Helpers
 
   def default_setup
     Intacct.setup do |config|
+      config.invoice_prefix  = 'AUTO-'
+      config.bill_prefix     = 'AUTO-'
+      config.customer_prefix = 'C'
+      config.vendor_prefix   = 'A'
       config.xml_sender_id  = ENV['INTACCT_XML_SENDER_ID']
       config.xml_password   = ENV['INTACCT_XML_PASSWORD']
       config.app_user_id    = ENV['INTACCT_USER_ID']

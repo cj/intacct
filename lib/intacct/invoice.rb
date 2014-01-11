@@ -61,9 +61,9 @@ module Intacct
     def invoice_xml xml
       xml.customerid "#{object.customer.intacct_system_id}"
       xml.datecreated {
-        xml.year object.invoice.date_time_created.strftime("%Y")
-        xml.month object.invoice.date_time_created.strftime("%m")
-        xml.day object.invoice.date_time_created.strftime("%d")
+        xml.year object.invoice.created_at.strftime("%Y")
+        xml.month object.invoice.created_at.strftime("%m")
+        xml.day object.invoice.created_at.strftime("%d")
       }
 
       termname = customer_data.termname
