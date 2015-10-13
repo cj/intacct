@@ -1,5 +1,5 @@
 module Intacct
-  # module Models
+  module Models
     class Bill < Intacct::Base
 
       attr_accessor :customer_data
@@ -100,5 +100,5 @@ module Intacct
       end
 
     end
-  # end
+  end
 end

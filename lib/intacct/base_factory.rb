@@ -8,7 +8,7 @@ module Intacct
     end
 
     def target_class
-      "Intacct::#{klass.to_s.classify}".constantize
+      "Intacct::Models::#{klass.to_s.classify}".constantize
     end
 
     def self.delegate_to_target_class(*method_names)
@@ -19,7 +19,7 @@ module Intacct
       end
     end
 
-    # The priciple purpose of this class is to delegate methods to the corresponding
+    # The primary purpose of this class is to delegate methods to the corresponding
     # non-factory class and automatically prepend the client argument to the argument
     # list.
     delegate_to_target_class :get, :read, :read_by_name, :read_by_query
@@ -28,7 +28,5 @@ module Intacct
     def build(attrs={})
       target_class.build(@client, attrs)
     end
-
-
   end
 end

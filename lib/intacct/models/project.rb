@@ -1,78 +1,93 @@
 module Intacct
-  class Project < Intacct::Base
+  module Models
+    class Project < Intacct::Base
 
-    def create
-      send_xml('create') do |xml|
-        xml.function(controlid: "1") {
-          xml.create_project {
-            xml.projectid intacct_object_id
-            xml.name object.name
-            xml.description object.description
-            xml.parentid object.parent_id
-            xml.invoicewithparent object.invoice_with_parent
-            xml.projectcategory object.project_category
-            xml.projecttype object.project_type
-            xml.projectstatus object.project_status
-            xml.customerid object.customer_id
-            xml.managerid object.manager_id
-            xml.custuserid object.cust_user_id
-            xml.salescontactid object.sales_contact_id
-            xml.begindate {
-              xml.year object.begin_date.try(:strftime, "%Y")
-              xml.month object.begin_date.try(:strftime, "%m")
-              xml.day object.begin_date.try(:strftime, "%d")
+      def create
+        send_xml('create') do |xml|
+          xml.function(controlid: "1") {
+            xml.create_project {
+              project_xml(xml)
             }
-            xml.enddate {
-              xml.year object.end_date.try(:strftime, "%Y")
-              xml.month object.end_date.try(:strftime, "%m")
-              xml.day object.end_date.try(:strftime, "%d")
-            }
-            xml.departmentid object.department_id
-            xml.locationid object.location_id
-            xml.classid object.class_id
-            xml.currency object.currency
-            xml.billingtype object.billing_type
-            xml.termname object.term_name
-            xml.docnumber object.doc_number
-            # xml.billto object.bill_to
-            # xml.shipto object.ship_to
-            # xml.contactinfo object.contact_info
-            xml.sonumber object.so_number
-            xml.ponumber object.po_number
-            xml.poamount object.po_amount
-            xml.pqnumber object.pq_number
-            xml.budgetamount object.budget_amount
-            xml.budgetedcost object.budgeted_cost
-            xml.budgetqty object.budget_qty
-            xml.userrestrictions object.user_restrictions
-            xml.obspercentcomplete object.obs_percent_complete
-            xml.budgetid object.budget_id
-            xml.billingrate object.billing_rate
-            xml.billingpricing object.billing_pricing
-            xml.expenserate object.expense_rate
-            xml.expensepricing object.expense_pricing
-            xml.poaprate object.po_ap_rate
-            xml.poappricing object.po_ap_pricing
-            xml.status object.status
-            xml.supdocid object.sup_doc_id
-            xml.invoicemessage object.invoice_message
-            xml.invoicecurrency object.invoice_currency
-
-            if object.project_resources
-              xml.projectresources {
-                object.project_resources.each { |project_resource|
-                  xml.projectresource {
-                    xml.employeeid project_resource.employee_id
-                    xml.itemid project_resource.item_id
-                    xml.resourcedescription project_resource.resouce_description
-                    xml.billingrate project_resource.billing_rate
-
-                  }
-                }
-              }
-            end
           }
+        end
+      end
+
+      def update
+        send_xml('update') do |xml|
+          xml.function(controlid: '1') {
+            xml.update_project(key: key) {
+              project_xml(xml)
+            }
+          }
+        end
+      end
+
+      private
+
+      def project_xml(xml)
+        xml.projectid key if key
+        xml.name object.name
+        xml.description object.description
+        xml.parentid object.parentid
+        xml.invoicewithparent object.invoicewithparent
+        xml.projectcategory object.projectcategory
+        xml.projecttype object.projecttype
+        xml.projectstatus object.projectstatus
+        xml.customerid object.customerid
+        xml.managerid object.managerid
+        xml.custuserid object.custuserid
+        xml.salescontactid object.salescontactid
+        xml.begindate {
+          xml.year object.begindate.try(:strftime, "%Y")
+          xml.month object.begindate.try(:strftime, "%m")
+          xml.day object.begindate.try(:strftime, "%d")
         }
+        xml.enddate {
+          xml.year object.enddate.try(:strftime, "%Y")
+          xml.month object.enddate.try(:strftime, "%m")
+          xml.day object.enddate.try(:strftime, "%d")
+        }
+        xml.departmentid object.departmentid
+        xml.locationid object.locationid
+        xml.classid object.classid
+        xml.currency object.currency
+        xml.billingtype object.billingtype
+        xml.termname object.termname
+        xml.docnumber object.docnumber
+        xml.sonumber object.sonumber
+        xml.ponumber object.ponumber
+        xml.poamount object.poamount
+        xml.pqnumber object.pqnumber
+        xml.budgetamount object.budgetamount
+        xml.budgetedcost object.budgetedcost
+        xml.budgetqty object.budgetqty
+        xml.userrestrictions object.userRestrictions
+        xml.obspercentcomplete object.obspercentcomplete
+        xml.budgetid object.budgetid
+        xml.billingrate object.billingrate
+        xml.billingpricing object.billingpricing
+        xml.expenserate object.expenserate
+        xml.expensepricing object.expensepricing
+        xml.poaprate object.poaprate
+        xml.poappricing object.poappricing
+        xml.status object.status
+        xml.supdocid object.supdocid
+        xml.invoicemessage object.invoicemessage
+        xml.invoicecurrency object.invoicecurrency
+
+        if object.projectresources
+          xml.projectresources {
+            object.projectresources.each { |projectresource|
+              xml.projectresource {
+                xml.employeeid projectresource.employeeid
+                xml.itemid projectresource.itemid
+                xml.resourcedescription projectresource.resoucedescription
+                xml.billingrate projectresource.billingrate
+
+              }
+            }
+          }
+        end
       end
     end
   end

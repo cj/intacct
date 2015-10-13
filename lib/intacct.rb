@@ -4,10 +4,10 @@ require 'nokogiri'
 require 'hooks'
 
 require 'intacct/client'
-require 'intacct/xml_request_builder'
+require 'intacct/xml_request'
 require 'intacct/base'
 require 'intacct/base_factory'
-require 'intacct/actions'
+require 'intacct/response'
 
 require 'intacct/models/project'
 require 'intacct/models/bill'

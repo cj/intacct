@@ -14,11 +14,9 @@ module Intacct
     end
 
     def self.get(client, key, options = {})
-      # return false unless object.intacct_system_id.present?
-
-      response = send_xml(client, 'get') do |xml|
+      send_xml(client, 'get') do |xml|
         xml.function(controlid: "f4") {
-          xml.get(object: api_name.downcase, key: key) {
+          xml.get(object: api_name, key: key) {
 
             if options[:fields]
               xml.fields {
@@ -30,35 +28,32 @@ module Intacct
           }
         }
       end
+    end
 
-      if status = response.at('//result//status') and status.content == "success"
-        attrs = Hash.from_xml(response.at('//result/data/project').to_xml)['project']
-        self.new(client, attrs)
-      end
+    def key
+      object.key || random_object_id
     end
 
     def method_missing(method_name, *args, &block)
-      if method_name.in? self.object.to_h.keys
+      stripped_method_name = method_name.to_s.gsub(/=$/, '')
+
+      if stripped_method_name.to_sym.in? self.object.to_h.keys
         self.object.send(method_name, *args)
       else
-        super method_name
+        super method_name, *args
       end
     end
 
-    def respond_to?(method_name)
+    def respond_to_missing?(method_name, *args)
       if method_name.in? self.object.to_h.keys
         true
       else
-        super method_name
+        super method_name, *args
       end
     end
 
     private
 
-    def self.send_xml(client, action, &block)
-      builder = Intacct::XmlRequestBuilder.new(client, action, OpenStruct.new)
-      builder.build_xml(&block)
-    end
 
     def send_xml(action = nil, &block)
       self.class.send_xml(client, action, &block)
@@ -67,7 +62,6 @@ module Intacct
     def api_name
       self.class.api_name
     end
-
 
     %w(invoice bill vendor customer project).each do |type|
       define_method "intacct_#{type}_prefix" do
@@ -95,8 +89,18 @@ module Intacct
       SecureRandom.random_number.to_s
     end
 
+
+    #
+    # Class Methods
+    #
+
     def self.api_name(name = nil)
-      @api_name ||= (name || self.name.to_s.demodulize.upcase)
+      @api_name ||= (name || self.name.to_s.demodulize.downcase)
+    end
+
+    def self.send_xml(client, action, &block)
+      builder = Intacct::XmlRequest.new(client, action, OpenStruct.new, self)
+      builder.build_xml(&block)
     end
   end
 end
