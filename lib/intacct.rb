@@ -1,12 +1,19 @@
-require "intacct/version"
+require 'intacct/version'
 require 'net/http'
 require 'nokogiri'
 require 'hooks'
-require "intacct/base"
-require "intacct/customer"
-require "intacct/vendor"
-require "intacct/invoice"
-require "intacct/bill"
+
+require 'intacct/client'
+require 'intacct/xml_request_builder'
+require 'intacct/base'
+require 'intacct/base_factory'
+require 'intacct/actions'
+
+require 'intacct/models/project'
+require 'intacct/models/bill'
+require 'intacct/models/customer'
+require 'intacct/models/vendor'
+require 'intacct/models/invoice'
 
 class Object
   def blank?
@@ -24,7 +31,8 @@ module Intacct
   attr_accessor :xml_sender_id  , :xml_password    ,
                 :app_user_id    , :app_company_id  , :app_password ,
                 :invoice_prefix , :bill_prefix     ,
-                :vendor_prefix  , :customer_prefix
+                :vendor_prefix  , :customer_prefix ,
+                :project_prefix
 
   def setup
     yield self

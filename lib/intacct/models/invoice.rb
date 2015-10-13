@@ -3,6 +3,8 @@ module Intacct
     attr_accessor :customer_data
     define_hook :custom_invoice_fields
 
+    api_name 'ARINVOICE'
+
     def create
       return false if object.invoice.intacct_system_id.present?
 
@@ -58,7 +60,7 @@ module Intacct
       "#{intacct_invoice_prefix}#{object.invoice.id}"
     end
 
-    def invoice_xml xml
+    def invoice_xml(xml)
       xml.customerid "#{object.customer.intacct_system_id}"
       xml.datecreated {
         xml.year object.invoice.created_at.strftime("%Y")
@@ -67,7 +69,7 @@ module Intacct
       }
 
       termname = customer_data.termname
-      xml.termname termname.present?? termname : "Net 30"
+      xml.termname termname.present? ? termname : "Net 30"
 
       xml.invoiceno intacct_object_id
       run_hook :custom_invoice_fields, xml
@@ -77,7 +79,7 @@ module Intacct
       object.invoice.intacct_system_id = intacct_object_id
     end
 
-    def set_intacct_key key
+    def set_intacct_key(key)
       object.invoice.intacct_key = key
     end
 
@@ -89,7 +91,7 @@ module Intacct
       object.invoice.intacct_key = nil
     end
 
-    def set_date_time type
+    def set_date_time(type)
       if %w(create update delete).include? type
         if object.invoice.respond_to? :"intacct_#{type}d_at"
           object.invoice.send("intacct_#{type}d_at=", DateTime.now)

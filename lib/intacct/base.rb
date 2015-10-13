@@ -1,76 +1,78 @@
 module Intacct
-  class Base < Struct.new(:object, :current_user)
-    include Hooks
-    include Hooks::InstanceHooks
+  class Base < Struct.new(:client, :object)
 
-    define_hook :after_create, :after_update, :after_delete,
-      :after_get, :after_send_xml, :on_error, :before_create
+    attr_accessor  :client, :sent_xml, :intacct_action, :api_name
 
-    after_create :set_intacct_system_id
-    after_delete :delete_intacct_system_id
-    after_delete :delete_intacct_key
-    after_send_xml :set_date_time
-
-    attr_accessor :response, :data, :sent_xml, :intacct_action
-
-    def initialize *params
+    def initialize(client, *params)
+      @client = client
       params[0] = OpenStruct.new(params[0]) if params[0].is_a? Hash
-      super(*params)
+      super(client, *params)
     end
 
-    private
+    def self.build(client, options = {})
+      self.new(client, options)
+    end
 
-    def send_xml action
-      @intacct_action = action.to_s
-      run_hook :"before_#{intacct_action}" if action=="create"
+    def self.get(client, key, options = {})
+      # return false unless object.intacct_system_id.present?
 
-      builder = Nokogiri::XML::Builder.new do |xml|
-        xml.request {
-          xml.control {
-            xml.senderid Intacct.xml_sender_id
-            xml.password Intacct.xml_password
-            xml.controlid "INVOICE XML"
-            xml.uniqueid "false"
-            xml.dtdversion "2.1"
-          }
-          xml.operation(transaction: "false") {
-            xml.authentication {
-              xml.login {
-                xml.userid Intacct.app_user_id
-                xml.companyid Intacct.app_company_id
-                xml.password Intacct.app_password
+      response = send_xml(client, 'get') do |xml|
+        xml.function(controlid: "f4") {
+          xml.get(object: api_name.downcase, key: key) {
+
+            if options[:fields]
+              xml.fields {
+                fields.each do |field|
+                  xml.field field.to_s
+                end
               }
-            }
-            xml.content {
-              yield xml
-            }
+            end
           }
         }
       end
 
-      xml = builder.doc.root.to_xml
-      @sent_xml = xml
-
-      url = "https://www.intacct.com/ia/xml/xmlgw.phtml"
-      uri = URI(url)
-
-      res = Net::HTTP.post_form(uri, 'xmlrequest' => xml)
-      @response = Nokogiri::XML(res.body)
-
-      if successful?
-        if key = response.at('//result//key')
-          set_intacct_key key.content
-        end
-
-        if intacct_action
-          run_hook :after_send_xml, intacct_action
-          run_hook :"after_#{intacct_action}"
-        end
-      else
-        run_hook :on_error
+      if status = response.at('//result//status') and status.content == "success"
+        attrs = Hash.from_xml(response.at('//result/data/project').to_xml)['project']
+        self.new(client, attrs)
       end
+    end
 
-      @response
+    def method_missing(method_name, *args, &block)
+      if method_name.in? self.object.to_h.keys
+        self.object.send(method_name, *args)
+      else
+        super method_name
+      end
+    end
+
+    def respond_to?(method_name)
+      if method_name.in? self.object.to_h.keys
+        true
+      else
+        super method_name
+      end
+    end
+
+    private
+
+    def self.send_xml(client, action, &block)
+      builder = Intacct::XmlRequestBuilder.new(client, action, OpenStruct.new)
+      builder.build_xml(&block)
+    end
+
+    def send_xml(action = nil, &block)
+      self.class.send_xml(client, action, &block)
+    end
+
+    def api_name
+      self.class.api_name
+    end
+
+
+    %w(invoice bill vendor customer project).each do |type|
+      define_method "intacct_#{type}_prefix" do
+        Intacct.send("#{type}_prefix")
+      end
     end
 
     def successful?
@@ -81,38 +83,20 @@ module Intacct
       end
     end
 
-    %w(invoice bill vendor customer).each do |type|
-      define_method "intacct_#{type}_prefix" do
-        Intacct.send("#{type}_prefix")
-      end
-    end
-
     def intacct_system_id
       intacct_object_id
     end
 
-    def set_intacct_system_id
-      object.intacct_system_id = intacct_object_id
+    def intacct_object_id
+      object.id ? "#{intacct_customer_prefix}#{object.id}" : random_object_id
     end
 
-    def delete_intacct_system_id
-      object.intacct_system_id = nil
+    def random_object_id
+      SecureRandom.random_number.to_s
     end
 
-    def set_intacct_key key
-      object.intacct_key = key if object.respond_to? :intacct_key
-    end
-
-    def delete_intacct_key
-      object.intacct_key = nil if object.respond_to? :intacct_key
-    end
-
-    def set_date_time type
-      if %w(create update delete).include? type
-        if object.respond_to? :"intacct_#{type}d_at"
-          object.send("intacct_#{type}d_at=", DateTime.now)
-        end
-      end
+    def self.api_name(name = nil)
+      @api_name ||= (name || self.name.to_s.demodulize.upcase)
     end
   end
 end

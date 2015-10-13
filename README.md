@@ -1,6 +1,6 @@
 # Intacct
 
-TODO: Write a gem description
+This gem provides a Ruby wrapper for the Intacct API.
 
 ## Installation
 
@@ -18,7 +18,14 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Create a new instance of `Intacct::Client` with credentials
+    
+    client = Intacct::Client.new(xml_sender_id: ..., xml_password: ..., user_id: ..., password: ..., company_id: ...)
+    
+Creating a new project
+
+    project = client.projects.build(name: "New Project", project_category: "Contract")
+    project.create
 
 ## Contributing
 
