@@ -1,11 +1,7 @@
 module Intacct
   class Response
 
-    include Hooks
-    include Hooks::InstanceHooks
-
-    define_hook :after_create, :after_update, :after_delete,
-                :after_get, :after_send_xml, :on_error
+    include Intacct::Callbacks
 
     after_create :set_intacct_system_id
     after_delete :delete_intacct_system_id
@@ -14,21 +10,24 @@ module Intacct
 
     attr_accessor :client, :response, :model, :action, :model_class
 
-    def initialize(client, response, model_class, action)
+    def initialize(client, response, model_class, action, model = nil)
       @client      = client
       @response    = response
       @model_class = model_class
       @action      = action
+      @model       = model
     end
 
     def handle_response
       if successful?
+        wrap_response!
+
         if action
           run_hook :after_send_xml, action
           run_hook :"after_#{action}"
         end
 
-        wrap_response!
+        model
       else
         run_hook :on_error
 
@@ -39,11 +38,17 @@ module Intacct
     private
 
     def wrap_response!
-      @model = model_class.new(client, parse_successful_response)
+      unless model
+        @model = model_class.new(client, parse_successful_response)
+      end
     end
 
     def parse_successful_response
-      Hash.from_xml(response.at("//result/data/#{model_class.api_name}").to_xml)[model_class.api_name]
+      if action.in? %w(create update)
+        { key: response.at('//result/key').content }
+      else
+        Hash.from_xml(response.at("//result/data/#{model_class.api_name}").to_xml)[model_class.api_name]
+      end
     end
 
     def successful?

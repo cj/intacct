@@ -1,20 +1,17 @@
 module Intacct
   class XmlRequest
 
-    include Hooks
-    include Hooks::InstanceHooks
+    include Intacct::Callbacks
 
-    define_hook :before_create
-
-
-    attr_accessor :client, :object, :action, :intacct_action, :model_class
+    attr_accessor :client, :object, :action, :intacct_action, :model_class, :model
 
     URL = "https://www.intacct.com/ia/xml/xmlgw.phtml".freeze
 
-    def initialize(client, action, object, model_class)
+    def initialize(client, action, model_class, model)
       @client      = client
       @action      = action
-      @object      = object
+      @model       = model
+      @object      = @model.try(:object) || OpenStruct.new
       @model_class = model_class
     end
 
@@ -29,7 +26,8 @@ module Intacct
 
     def send_xml(action = nil)
       @intacct_action = action.to_s
-      run_hook :"before_#{action}" if action == "create"
+
+      run_hook :"before_#{action}" if action.in? CALLBACK_ACTIONS
 
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.request {
@@ -63,7 +61,7 @@ module Intacct
       res = Net::HTTP.post_form(uri, 'xmlrequest' => xml)
       response = Nokogiri::XML(res.body)
 
-      Intacct::Response.new(client, response, model_class, intacct_action).handle_response
+      Intacct::Response.new(client, response, model_class, intacct_action, model).handle_response
 
     end
 

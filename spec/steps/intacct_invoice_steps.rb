@@ -11,7 +11,7 @@ module IntacctInvoiceSteps
   step('I have an invoice, customer and vendor') { invoice; customer; vendor }
 
   step 'I create an Intacct Invoice object' do
-    @intacct_invoice = Intacct::Invoice.new({
+    @intacct_invoice = Intacct::Models::Invoice.new({
       invoice: invoice,
       customer: customer,
       vendor: vendor
@@ -31,13 +31,13 @@ module IntacctInvoiceSteps
     @intacct_invoice.object.invoice.intacct_key = IntacctInvoiceSteps.intacct_key
     @response = @intacct_invoice.delete
     if @response
-      Intacct::Customer.new(@intacct_invoice.object.customer).delete
-      Intacct::Vendor.new(@intacct_invoice.object.vendor).delete
+      Intacct::Models::Customer.new(@intacct_invoice.object.customer).delete
+      Intacct::Models::Vendor.new(@intacct_invoice.object.vendor).delete
     end
   end
 
   def custom_fields_for_auto
-    Intacct::Invoice.class_eval do
+    Intacct::Models::Invoice.class_eval do
       custom_invoice_fields do |xml|
         xml.customfields {
           xml.customfield {

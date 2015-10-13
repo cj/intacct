@@ -31,13 +31,13 @@ module IntacctBillSteps
     @intacct_bill.object.payment.intacct_key = IntacctBillSteps.intacct_key
     @response = @intacct_bill.delete
     if @response
-      Intacct::Customer.new(@intacct_bill.object.customer).delete
-      Intacct::Vendor.new(@intacct_bill.object.vendor).delete
+      Intacct::Models::Customer.new(@intacct_bill.object.customer).delete
+      Intacct::Models::Vendor.new(@intacct_bill.object.vendor).delete
     end
   end
 
   def custom_fields_for_auto
-    Intacct::Bill.class_eval do
+    IModels::ntacct::Bill.class_eval do
       custom_bill_fields do |xml|
         xml.billno intacct_object_id #intact bill id
         xml.ponumber object.payment.claim.claimnumber

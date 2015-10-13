@@ -4,7 +4,7 @@ module Intacct
 
       attr_accessor :customer_data
 
-      define_hook :custom_bill_fields, :bill_item_fields
+      # define_hook :custom_bill_fields, :bill_item_fields
 
       def create
         return false if object.payment.intacct_system_id.present?

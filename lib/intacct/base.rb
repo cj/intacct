@@ -30,8 +30,37 @@ module Intacct
       end
     end
 
+    def create
+      send_xml('create') do |xml|
+        xml.function(controlid: '1') {
+          xml.send("create_#{api_name}") {
+
+            xml.send("#{api_name}id", key)
+
+            object.to_h.each { |key, value|
+
+              object_attributes_to_xml(xml, key, value)
+
+            }
+
+          }
+        }
+      end
+    end
+
     def key
-      object.key || random_object_id
+      @key ||= (object.key || random_object_id)
+    end
+
+    def object_attributes_to_xml(xml, key, value)
+      if value.is_a?(Hash)
+        value.each { |k, v|
+          object_attributes_to_xml(xml, k, v)
+        }
+      else
+        xml.send(key, value)
+      end
+
     end
 
     def method_missing(method_name, *args, &block)
@@ -56,7 +85,7 @@ module Intacct
 
 
     def send_xml(action = nil, &block)
-      self.class.send_xml(client, action, &block)
+      self.class.send_xml(client, action, self, &block)
     end
 
     def api_name
@@ -98,8 +127,8 @@ module Intacct
       @api_name ||= (name || self.name.to_s.demodulize.downcase)
     end
 
-    def self.send_xml(client, action, &block)
-      builder = Intacct::XmlRequest.new(client, action, OpenStruct.new, self)
+    def self.send_xml(client, action, model = nil, &block)
+      builder = Intacct::XmlRequest.new(client, action, self, model)
       builder.build_xml(&block)
     end
   end

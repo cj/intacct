@@ -2,8 +2,10 @@ require 'intacct/version'
 require 'net/http'
 require 'nokogiri'
 require 'hooks'
+require 'active_support/all'
 
 require 'intacct/client'
+require 'intacct/callbacks'
 require 'intacct/xml_request'
 require 'intacct/base'
 require 'intacct/base_factory'
@@ -14,6 +16,8 @@ require 'intacct/models/bill'
 require 'intacct/models/customer'
 require 'intacct/models/vendor'
 require 'intacct/models/invoice'
+require 'intacct/models/task'
+
 
 class Object
   def blank?
@@ -32,7 +36,7 @@ module Intacct
                 :app_user_id    , :app_company_id  , :app_password ,
                 :invoice_prefix , :bill_prefix     ,
                 :vendor_prefix  , :customer_prefix ,
-                :project_prefix
+                :project_prefix , :task_prefix
 
   def setup
     yield self

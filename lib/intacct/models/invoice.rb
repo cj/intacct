@@ -2,7 +2,6 @@ module Intacct
   module Models
     class Invoice < Intacct::Base
       attr_accessor :customer_data
-      define_hook :custom_invoice_fields
 
       api_name 'ARINVOICE'
 
