@@ -48,19 +48,51 @@ module Intacct
       end
     end
 
+    # NOTE(AB): This is a WIP. Intacct is pedantic about the order of fields in the request
+    #           We should probably specify the order of fields on the model and then rearrange
+    #           the model attributes when preparing the request.
+    def update
+      send_xml('update') do |xml|
+        xml.function(controlid: '1') {
+          xml.send("update_#{api_name}", key: key) {
+
+            xml.send("#{api_name}id", key)
+
+            sliced_object.each { |key, value|
+
+              object_attributes_to_xml(xml, key, value)
+
+            }
+
+          }
+        }
+      end
+    end
+
     def key
       @key ||= (object.key || random_object_id)
     end
 
     def object_attributes_to_xml(xml, key, value)
       if value.is_a?(Hash)
-        value.each { |k, v|
-          object_attributes_to_xml(xml, k, v)
+        xml.send(key) {
+          value.each do |k,v|
+            object_attributes_to_xml(xml, k, v)
+          end
         }
+      elsif value.is_a?(Array)
+        value.each do |val|
+          val.each do |k,v|
+            object_attributes_to_xml(xml, k, v)
+          end
+        end
       else
         xml.send(key, value)
       end
+    end
 
+    def sliced_object
+      object.to_h.except(*read_only_fields, :key, :whenmodified)
     end
 
     def method_missing(method_name, *args, &block)
@@ -90,6 +122,10 @@ module Intacct
 
     def api_name
       self.class.api_name
+    end
+
+    def read_only_fields
+      self.class.read_only_fields
     end
 
     %w(invoice bill vendor customer project).each do |type|
@@ -130,6 +166,21 @@ module Intacct
     def self.send_xml(client, action, model = nil, &block)
       builder = Intacct::XmlRequest.new(client, action, self, model)
       builder.build_xml(&block)
+    end
+
+    def self.read_only_fields(*args)
+      if args.empty?
+        @read_only_fields ||= Set.new
+      else
+        args.each do |arg|
+          read_only_field arg
+        end
+      end
+    end
+
+    def self.read_only_field(name)
+      name_sym = name.to_sym
+      read_only_fields << name_sym
     end
   end
 end

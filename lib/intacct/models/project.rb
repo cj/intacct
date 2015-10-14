@@ -22,6 +22,8 @@ module Intacct
         end
       end
 
+      read_only_fields :budgetduration, :percentcomplete, :supdocid, :contactinfo, :whenmodified
+
       private
 
       def project_xml(xml)

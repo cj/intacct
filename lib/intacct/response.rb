@@ -30,8 +30,7 @@ module Intacct
         model
       else
         run_hook :on_error
-
-        StandardError.new('Intacct Error')
+        raise Intacct::Error(response)
       end
     end
 
