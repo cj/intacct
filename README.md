@@ -6,7 +6,7 @@ This gem provides a Ruby wrapper for the Intacct API.
 
 Add this line to your application's Gemfile:
 
-    gem 'intacct'
+    gem 'intacct-ruby'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install intacct
+    $ gem install intacct-ruby
 
 ## Usage
 
@@ -26,6 +26,15 @@ Creating a new project
 
     project = client.projects.build(name: "New Project", project_category: "Contract")
     project.create
+    
+Fetching a project
+    
+    project = client.projects.get(PROJECT_ID)
+    
+Updating a project
+    
+    project.name = "Updated Project"
+    project.update
 
 ## Contributing
 
