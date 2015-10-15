@@ -1,3 +1,5 @@
+$: << File.expand_path(File.dirname(__FILE__))
+
 require 'intacct/version'
 require 'net/http'
 require 'nokogiri'
