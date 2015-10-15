@@ -36,12 +36,12 @@ module Intacct
   extend self
 
   attr_accessor :xml_sender_id  , :xml_password    ,
-                :app_user_id    , :app_company_id  , :app_password ,
+                :user_id        , :company_id      , :password ,
                 :invoice_prefix , :bill_prefix     ,
                 :vendor_prefix  , :customer_prefix ,
                 :project_prefix , :task_prefix
 
-  def setup
+  def configure
     yield self
   end
 end
