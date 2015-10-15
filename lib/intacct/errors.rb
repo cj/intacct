@@ -1,6 +1,6 @@
 require 'forwardable'
-module Intacct
 
+module Intacct
   class Error < StandardError
     extend Forwardable
 
@@ -12,5 +12,4 @@ module Intacct
     end
 
   end
-
 end
