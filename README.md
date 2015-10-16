@@ -16,11 +16,30 @@ Or install it yourself as:
 
     $ gem install intacct-ruby
 
-## Usage
 
-Create a new instance of `Intacct::Client` with credentials
+## Configuration
+
+There are two ways to approach configuration.
+
+1) Add credentials to the `Intacct` module
+
+    Intacct.configure do |config|
+        config.xml_sender_id = ...
+        config.xml_password  = ...
+        config.user_id       = ...
+        config.password      = ...
+        config.company_id    = ...
+    end
+    
+Then, when instantiating an `Intacct::Client` no arguments are necessary
+
+    client = Intacct::Client.new
+    
+2) Provide credentials when instantiating an `Intacct::Client`
     
     client = Intacct::Client.new(xml_sender_id: ..., xml_password: ..., user_id: ..., password: ..., company_id: ...)
+
+## Usage
     
 Creating a new project
 
