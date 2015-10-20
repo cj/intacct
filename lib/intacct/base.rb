@@ -3,10 +3,10 @@ module Intacct
 
     attr_accessor  :client, :sent_xml, :intacct_action, :api_name
 
-    def initialize(client, *params)
+    def initialize(client, *args)
       @client = client
-      params[0] = OpenStruct.new(params[0]) if params[0].is_a? Hash
-      super(client, *params)
+      args[0] = OpenStruct.new(args[0]) if args[0].is_a? Hash
+      super(client, *args)
     end
 
     def self.build(client, options = {})
@@ -30,19 +30,27 @@ module Intacct
       end
     end
 
-    def create
-      send_xml('create') do |xml|
-        xml.function(controlid: '1') {
-          xml.send("create_#{api_name}") {
+    def self.read(client, key, options = {})
+      send_xml(client, 'read') do |xml|
+        xml.function(controlid: 'f4') {
+          xml.read {
+            xml.object api_name.upcase
+            xml.keys key
+            xml.fields '*'
+            xml.returnFormat 'xml'
+          }
+        }
+      end
+    end
 
-            xml.send("#{api_name}id", key)
-
-            object.to_h.each { |key, value|
-
-              object_attributes_to_xml(xml, key, value)
-
-            }
-
+    def self.read_by_query(client, query)
+      send_xml(client, 'readByQuery') do |xml|
+        xml.function(controlid: 'f4') {
+          xml.readByQuery {
+            xml.object api_name.upcase
+            xml.query query
+            xml.pagesize 100
+            xml.returnFormat 'xml'
           }
         }
       end
@@ -51,48 +59,44 @@ module Intacct
     # NOTE(AB): This is a WIP. Intacct is pedantic about the order of fields in the request
     #           We should probably specify the order of fields on the model and then rearrange
     #           the model attributes when preparing the request.
-    def update
-      send_xml('update') do |xml|
-        xml.function(controlid: '1') {
-          xml.send("update_#{api_name}", key: key) {
-
-            xml.send("#{api_name}id", key)
-
-            sliced_object.each { |key, value|
-
-              object_attributes_to_xml(xml, key, value)
-
-            }
-
-          }
-        }
-      end
-    end
+    # def create
+    #   send_xml('create') do |xml|
+    #     xml.function(controlid: '1') {
+    #       xml.send("create_#{api_name}") {
+    #
+    #         xml.send("#{api_name}id", key)
+    #
+    #         object.to_h.each { |key, value|
+    #
+    #           object_attributes_to_xml(xml, key, value)
+    #
+    #         }
+    #
+    #       }
+    #     }
+    #   end
+    # end
+    #
+    # def update
+    #   send_xml('update') do |xml|
+    #     xml.function(controlid: '1') {
+    #       xml.send("update_#{api_name}", key: key) {
+    #
+    #         xml.send("#{api_name}id", key)
+    #
+    #         sliced_object.each { |key, value|
+    #
+    #           object_attributes_to_xml(xml, key, value)
+    #
+    #         }
+    #
+    #       }
+    #     }
+    #   end
+    # end
 
     def key
       @key ||= (object.key || random_object_id)
-    end
-
-    def object_attributes_to_xml(xml, key, value)
-      if value.is_a?(Hash)
-        xml.send(key) {
-          value.each do |k,v|
-            object_attributes_to_xml(xml, k, v)
-          end
-        }
-      elsif value.is_a?(Array)
-        value.each do |val|
-          val.each do |k,v|
-            object_attributes_to_xml(xml, k, v)
-          end
-        end
-      else
-        xml.send(key, value)
-      end
-    end
-
-    def sliced_object
-      object.to_h.except(*read_only_fields, :key, :whenmodified)
     end
 
     def method_missing(method_name, *args, &block)
@@ -126,6 +130,28 @@ module Intacct
 
     def read_only_fields
       self.class.read_only_fields
+    end
+
+    def object_attributes_to_xml(xml, key, value)
+      if value.is_a?(Hash)
+        xml.send(key) {
+          value.each do |k,v|
+            object_attributes_to_xml(xml, k, v)
+          end
+        }
+      elsif value.is_a?(Array)
+        value.each do |val|
+          val.each do |k,v|
+            object_attributes_to_xml(xml, k, v)
+          end
+        end
+      else
+        xml.send(key, value)
+      end
+    end
+
+    def sliced_object
+      object.to_h.except(*read_only_fields, :key, :whenmodified)
     end
 
     %w(invoice bill vendor customer project).each do |type|

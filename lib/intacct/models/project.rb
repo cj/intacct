@@ -2,15 +2,15 @@ module Intacct
   module Models
     class Project < Intacct::Base
 
-      # def create
-      #   send_xml('create') do |xml|
-      #     xml.function(controlid: "1") {
-      #       xml.create_project {
-      #         project_xml(xml)
-      #       }
-      #     }
-      #   end
-      # end
+      def create
+        send_xml('create') do |xml|
+          xml.function(controlid: "1") {
+            xml.create_project {
+              project_xml(xml)
+            }
+          }
+        end
+      end
 
       def update
         send_xml('update') do |xml|

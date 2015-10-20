@@ -1,6 +1,5 @@
 module Intacct
   class Client
-    attr_accessor :xml_sender_id, :xml_password, :user_id, :password, :company_id
     attr_accessor :credentials
 
     def initialize(options = {})

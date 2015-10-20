@@ -32,18 +32,18 @@ module Intacct
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.request {
           xml.control {
-            xml.senderid client.credentials.xml_sender_id
-            xml.password client.credentials.xml_password
-            xml.controlid "INVOICE XML"
-            xml.uniqueid "false"
-            xml.dtdversion "2.1"
+            xml.senderid client.credentials[:xml_sender_id]
+            xml.password client.credentials[:xml_password]
+            xml.controlid 'Intacct Ruby Library'
+            xml.uniqueid 'false'
+            xml.dtdversion '2.1'
           }
-          xml.operation(transaction: "false") {
+          xml.operation(transaction: 'false') {
             xml.authentication {
               xml.login {
-                xml.userid client.credentials.user_id
-                xml.companyid client.credentials.company_id
-                xml.password client.credentials.password
+                xml.userid client.credentials[:user_id]
+                xml.companyid client.credentials[:company_id]
+                xml.password client.credentials[:password]
               }
             }
             xml.content {

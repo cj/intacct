@@ -3,9 +3,9 @@ module Intacct
 
     include Intacct::Callbacks
 
-    after_create :set_intacct_system_id
-    after_delete :delete_intacct_system_id
-    after_delete :delete_intacct_key
+    after_create   :set_intacct_system_id
+    after_delete   :delete_intacct_system_id
+    after_delete   :delete_intacct_key
     after_send_xml :set_date_time
 
     attr_accessor :client, :response, :model, :action, :model_class
@@ -20,17 +20,24 @@ module Intacct
 
     def handle_response
       if successful?
-        wrap_response!
 
-        if action
-          run_hook :after_send_xml, action
-          run_hook :"after_#{action}"
+        if persistence_action?
+          model
+        elsif fetch_action?
+          wrap_response!
+
+          if action
+            run_hook :after_send_xml, action
+            run_hook :"after_#{action}"
+          end
+
+          model
+        else
+          nil
         end
-
-        model
       else
         run_hook :on_error
-        raise Intacct::Error(response)
+        raise Intacct::Error.new(response)
       end
     end
 
@@ -43,7 +50,7 @@ module Intacct
     end
 
     def parse_successful_response
-      if action.in? %w(create update)
+      if persistence_action?
         { key: response.at('//result/key').content }
       else
         Hash.from_xml(response.at("//result/data/#{model_class.api_name}").to_xml)[model_class.api_name]
@@ -52,6 +59,14 @@ module Intacct
 
     def successful?
       (status = response.at('//result//status')) && status.content == 'success'
+    end
+
+    def fetch_action?
+      response.at('//result/data').present?
+    end
+
+    def persistence_action?
+      action.in? %w(create update)
     end
 
     def set_intacct_system_id
