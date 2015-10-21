@@ -20,6 +20,7 @@ require 'intacct/models/customer'
 require 'intacct/models/vendor'
 require 'intacct/models/invoice'
 require 'intacct/models/task'
+require 'intacct/models/timesheet'
 
 
 class Object

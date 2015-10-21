@@ -31,7 +31,7 @@ module Intacct
     end
 
     def models
-      %w(bills customers invoices projects vendors)
+      %w(bills customers invoices projects vendors timesheets)
     end
   end
 end
