@@ -3,11 +3,6 @@ module Intacct
 
     include Intacct::Callbacks
 
-    after_create   :set_intacct_system_id
-    after_delete   :delete_intacct_system_id
-    after_delete   :delete_intacct_key
-    after_send_xml :set_date_time
-
     attr_accessor :client, :response, :model, :action, :model_class
 
     def initialize(client, response, model_class, action, model = nil)
@@ -26,17 +21,11 @@ module Intacct
         elsif fetch_action?
           wrap_response!
 
-          if action
-            run_hook :after_send_xml, action
-            run_hook :"after_#{action}"
-          end
-
           model
         else
           nil
         end
       else
-        run_hook :on_error
         raise Intacct::Error.new(response)
       end
     end
@@ -53,8 +42,13 @@ module Intacct
       if persistence_action?
         { key: response.at('//result/key').content }
       else
-        Hash.from_xml(response.at("//result/data/#{model_class.api_name}").to_xml)[model_class.api_name]
+        data = Hash.from_xml(response.at("//result/data/#{model_class.api_name}").to_xml)[model_class.api_name]
+        downcase_keys(data)
       end
+    end
+
+    def downcase_keys(hash)
+      hash.each_with_object({}) { |(k, v), hash| hash[k.downcase] = v }
     end
 
     def successful?

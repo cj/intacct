@@ -49,7 +49,7 @@ module Intacct
           xml.readByQuery {
             xml.object api_name.upcase
             xml.query query
-            xml.pagesize 100
+            xml.fields '*'
             xml.returnFormat 'xml'
           }
         }

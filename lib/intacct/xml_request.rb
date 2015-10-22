@@ -36,7 +36,7 @@ module Intacct
             xml.password client.credentials[:xml_password]
             xml.controlid 'Intacct Ruby Library'
             xml.uniqueid 'false'
-            xml.dtdversion '2.1'
+            xml.dtdversion '3.0'
           }
           xml.operation(transaction: 'false') {
             xml.authentication {
