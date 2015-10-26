@@ -31,7 +31,7 @@ module Intacct
         xml.name object.name
         xml.description object.description
         xml.parentid object.parentid
-        xml.invoicewithparent object.invoicewithparent
+        # xml.invoicewithparent object.invoicewithparent
         xml.projectcategory object.projectcategory
         xml.projecttype object.projecttype
         xml.projectstatus object.projectstatus
@@ -51,7 +51,7 @@ module Intacct
         }
         xml.departmentid object.departmentid
         xml.locationid object.locationid
-        xml.classid object.classid
+        # xml.classid object.classid
         xml.currency object.currency
         xml.billingtype object.billingtype
         xml.termname object.termname
@@ -60,22 +60,22 @@ module Intacct
         xml.ponumber object.ponumber
         xml.poamount object.poamount
         xml.pqnumber object.pqnumber
-        xml.budgetamount object.budgetamount
-        xml.budgetedcost object.budgetedcost
-        xml.budgetqty object.budgetqty
+        # xml.budgetamount object.budgetamount
+        # xml.budgetedcost object.budgetedcost
+        # xml.budgetqty object.budgetqty
         xml.userrestrictions object.userRestrictions
-        xml.obspercentcomplete object.obspercentcomplete
-        xml.budgetid object.budgetid
-        xml.billingrate object.billingrate
-        xml.billingpricing object.billingpricing
-        xml.expenserate object.expenserate
-        xml.expensepricing object.expensepricing
-        xml.poaprate object.poaprate
-        xml.poappricing object.poappricing
+        # xml.obspercentcomplete object.obspercentcomplete
+        # xml.budgetid object.budgetid
+        # xml.billingrate object.billingrate
+        # xml.billingpricing object.billingpricing
+        # xml.expenserate object.expenserate
+        # xml.expensepricing object.expensepricing
+        # xml.poaprate object.poaprate
+        # xml.poappricing object.poappricing
         xml.status object.status
-        xml.supdocid object.supdocid
-        xml.invoicemessage object.invoicemessage
-        xml.invoicecurrency object.invoicecurrency
+        # xml.supdocid object.supdocid
+        # xml.invoicemessage object.invoicemessage
+        # xml.invoicecurrency object.invoicecurrency
 
         if object.projectresources
           xml.projectresources {
@@ -90,6 +90,18 @@ module Intacct
             }
           }
         end
+
+        if object.customfields
+          xml.customfields {
+            object.customfields.each { |customfield|
+              xml.customfield {
+                xml.customfieldname customfield[:customfieldname]
+                xml.customfieldvalue customfield[:customfieldvalue]
+              }
+            }
+          }
+        end
+
       end
     end
   end
