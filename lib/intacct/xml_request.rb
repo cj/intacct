@@ -65,6 +65,5 @@ module Intacct
 
     end
 
-
   end
 end
