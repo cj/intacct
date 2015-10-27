@@ -20,8 +20,6 @@ module Intacct
           model
         elsif fetch_action?
           wrap_response!
-
-          model
         else
           nil
         end
@@ -34,7 +32,13 @@ module Intacct
 
     def wrap_response!
       unless model
-        @model = model_class.new(client, parse_successful_response)
+        response = parse_successful_response
+
+        if response.is_a?(Array)
+          response.map { |r| model_class.new(client, r) }
+        else
+          model_class.new(client, response)
+        end
       end
     end
 
@@ -42,8 +46,11 @@ module Intacct
       if persistence_action?
         { key: response.at('//result/key').content }
       else
-        data = Hash.from_xml(response.at("//result/data/#{model_class.api_name}").to_xml)[model_class.api_name]
-        downcase_keys(data)
+        data = Hash.from_xml(response.at('//result/data').to_xml).values.first[model_class.api_name]
+
+        return nil unless data
+
+        data.is_a?(Array) ? data.map! { |d| downcase_keys(d) } : downcase_keys(data)
       end
     end
 
