@@ -50,6 +50,10 @@ Updating a project
     
     project.name = "Updated Project"
     project.update
+    
+Querying
+    
+    client.projects.read_by_query(QUERY STRING)
 
 ## Contributing
 
