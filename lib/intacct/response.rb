@@ -33,6 +33,7 @@ module Intacct
     def wrap_response!
       unless model
         response = parse_successful_response
+        return unless response
 
         if response.is_a?(Array)
           response.map { |r| model_class.new(client, r) }
@@ -46,16 +47,37 @@ module Intacct
       if persistence_action?
         { key: response.at('//result/key').content }
       else
-        data = Hash.from_xml(response.at('//result/data').to_xml).values.first[model_class.api_name]
+        data = Hash.from_xml(response.at('//result/data').to_xml)['data']
+        list_type = data['listtype']
+        results = data[list_type]
 
-        return nil unless data
+        return unless data
 
-        data.is_a?(Array) ? data.map! { |d| downcase_keys(d) } : downcase_keys(data)
+        transform_response!(results)
       end
     end
 
-    def downcase_keys(hash)
-      hash.each_with_object({}) { |(k, v), hash| hash[k.downcase] = v }
+    def transform_response!(data)
+      if data.is_a?(Array)
+        data.map! { |d|
+          transform_response!(d)
+        }
+      else
+        data       = downcase_keys(data)
+        data[:key] = data['recordno']
+        data
+      end
+    end
+
+    def downcase_keys(value)
+      case value
+        when Array
+          value.map { |v| downcase_keys(v) }
+        when Hash
+          Hash[value.map { |k, v| [k.downcase, downcase_keys(v)] }]
+        else
+          value
+      end
     end
 
     def successful?
@@ -68,6 +90,10 @@ module Intacct
 
     def persistence_action?
       action.in? %w(create update)
+    end
+
+    def object_identifier
+      "#{model_class.to_s.downcase}id"
     end
 
     def set_intacct_system_id
