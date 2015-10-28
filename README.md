@@ -6,7 +6,7 @@ This gem provides a Ruby wrapper for the Intacct API.
 
 Add this line to your application's Gemfile:
 
-    gem 'intacct-ruby', github: 'mavenlink-solutions/intacct-ruby', branch: 'mavenlink'
+    gem 'intacct', github: 'mavenlink-solutions/intacct-ruby', branch: 'mavenlink'
 
 And then execute:
 
