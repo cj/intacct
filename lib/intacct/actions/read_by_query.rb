@@ -43,7 +43,7 @@ module Intacct
               if response.body.is_a?(Array)
                 response.body.map { |r| new(client, r) }
               else
-                new(response.body)
+                new(client, response.body)
               end
             end
           end
