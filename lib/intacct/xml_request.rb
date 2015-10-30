@@ -2,7 +2,7 @@ module Intacct
   class XmlRequest
     include Intacct::Callbacks
 
-    attr_accessor :client, :object, :action, :intacct_action, :model_class, :model
+    attr_accessor :client, :attributes, :action, :intacct_action, :model_class, :model
 
     URL = "https://www.intacct.com/ia/xml/xmlgw.phtml".freeze
 

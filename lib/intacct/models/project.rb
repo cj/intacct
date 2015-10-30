@@ -4,58 +4,58 @@ module Intacct
 
       def create_xml(xml)
         xml.projectid key if key
-        xml.name object.name
-        xml.description object.description
-        xml.parentid object.parentid
-        # xml.invoicewithparent object.invoicewithparent
-        xml.projectcategory object.projectcategory
-        xml.projecttype object.projecttype
-        xml.projectstatus object.projectstatus
-        xml.customerid object.customerid
-        xml.managerid object.managerid
-        xml.custuserid object.custuserid
-        xml.salescontactid object.salescontactid
+        xml.name attributes.name
+        xml.description attributes.description
+        xml.parentid attributes.parentid
+        # xml.invoicewithparent attributes.invoicewithparent
+        xml.projectcategory attributes.projectcategory
+        xml.projecttype attributes.projecttype
+        xml.projectstatus attributes.projectstatus
+        xml.customerid attributes.customerid
+        xml.managerid attributes.managerid
+        xml.custuserid attributes.custuserid
+        xml.salescontactid attributes.salescontactid
         xml.begindate {
-          xml.year object.begindate.try(:strftime, "%Y")
-          xml.month object.begindate.try(:strftime, "%m")
-          xml.day object.begindate.try(:strftime, "%d")
+          xml.year attributes.begindate.try(:strftime, "%Y")
+          xml.month attributes.begindate.try(:strftime, "%m")
+          xml.day attributes.begindate.try(:strftime, "%d")
         }
         xml.enddate {
-          xml.year object.enddate.try(:strftime, "%Y")
-          xml.month object.enddate.try(:strftime, "%m")
-          xml.day object.enddate.try(:strftime, "%d")
+          xml.year attributes.enddate.try(:strftime, "%Y")
+          xml.month attributes.enddate.try(:strftime, "%m")
+          xml.day attributes.enddate.try(:strftime, "%d")
         }
-        xml.departmentid object.departmentid
-        xml.locationid object.locationid
-        # xml.classid object.classid
-        xml.currency object.currency
-        xml.billingtype object.billingtype
-        xml.termname object.termname
-        xml.docnumber object.docnumber
-        xml.sonumber object.sonumber
-        xml.ponumber object.ponumber
-        xml.poamount object.poamount
-        xml.pqnumber object.pqnumber
-        # xml.budgetamount object.budgetamount
-        # xml.budgetedcost object.budgetedcost
-        # xml.budgetqty object.budgetqty
-        xml.userrestrictions object.userRestrictions
-        # xml.obspercentcomplete object.obspercentcomplete
-        # xml.budgetid object.budgetid
-        # xml.billingrate object.billingrate
-        # xml.billingpricing object.billingpricing
-        # xml.expenserate object.expenserate
-        # xml.expensepricing object.expensepricing
-        # xml.poaprate object.poaprate
-        # xml.poappricing object.poappricing
-        xml.status object.status
-        # xml.supdocid object.supdocid
-        # xml.invoicemessage object.invoicemessage
-        # xml.invoicecurrency object.invoicecurrency
+        xml.departmentid attributes.departmentid
+        xml.locationid attributes.locationid
+        # xml.classid attributes.classid
+        xml.currency attributes.currency
+        xml.billingtype attributes.billingtype
+        xml.termname attributes.termname
+        xml.docnumber attributes.docnumber
+        xml.sonumber attributes.sonumber
+        xml.ponumber attributes.ponumber
+        xml.poamount attributes.poamount
+        xml.pqnumber attributes.pqnumber
+        # xml.budgetamount attributes.budgetamount
+        # xml.budgetedcost attributes.budgetedcost
+        # xml.budgetqty attributes.budgetqty
+        xml.userrestrictions attributes.userRestrictions
+        # xml.obspercentcomplete attributes.obspercentcomplete
+        # xml.budgetid attributes.budgetid
+        # xml.billingrate attributes.billingrate
+        # xml.billingpricing attributes.billingpricing
+        # xml.expenserate attributes.expenserate
+        # xml.expensepricing attributes.expensepricing
+        # xml.poaprate attributes.poaprate
+        # xml.poappricing attributes.poappricing
+        xml.status attributes.status
+        # xml.supdocid attributes.supdocid
+        # xml.invoicemessage attributes.invoicemessage
+        # xml.invoicecurrency attributes.invoicecurrency
 
-        if object.projectresources
+        if attributes.projectresources
           xml.projectresources {
-            object.projectresources.each { |projectresource|
+            attributes.projectresources.each { |projectresource|
               xml.projectresource {
                 xml.employeeid projectresource.employeeid
                 xml.itemid projectresource.itemid
@@ -67,9 +67,9 @@ module Intacct
           }
         end
 
-        if object.customfields
+        if attributes.customfields
           xml.customfields {
-            object.customfields.each { |label, customfield|
+            attributes.customfields.each { |label, customfield|
               xml.customfield {
                 xml.customfieldname customfield[:customfieldname]
                 xml.customfieldvalue customfield[:customfieldvalue]

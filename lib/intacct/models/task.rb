@@ -3,41 +3,41 @@ module Intacct
     class Task < Intacct::Base
 
       def create_xml(xml)
-        xml.taskname object.taskname
-        xml.projectid object.projectid
+        xml.taskname attributes.taskname
+        xml.projectid attributes.projectid
         xml.pbegindate  {
-          xml.year object.pbegindate.try(:strftime, "%Y")
-          xml.month object.pbegindate.try(:strftime, "%m")
-          xml.day object.pbegindate.try(:strftime, "%d")
+          xml.year attributes.pbegindate.try(:strftime, "%Y")
+          xml.month attributes.pbegindate.try(:strftime, "%m")
+          xml.day attributes.pbegindate.try(:strftime, "%d")
         }
         xml.penddate {
-          xml.year object.penddate.try(:strftime, "%Y")
-          xml.month object.penddate.try(:strftime, "%m")
-          xml.day object.penddate.try(:strftime, "%d")
+          xml.year attributes.penddate.try(:strftime, "%Y")
+          xml.month attributes.penddate.try(:strftime, "%m")
+          xml.day attributes.penddate.try(:strftime, "%d")
         }
-        xml.itemid object.itemid
-        xml.billable object.billable
-        xml.taxdescription object.taxdescription
-        xml.ismilestone object.ismilestone
-        xml.utilized object.utilized
-        xml.priority object.priority
-        xml.taskno object.taskno
-        xml.taskstatus object.taskstatus
-        xml.parenttaskname object.parenttaskname
-        xml.budgetqty object.budgetqty
-        xml.estqty object.estqty
+        xml.itemid attributes.itemid
+        xml.billable attributes.billable
+        xml.taxdescription attributes.taxdescription
+        xml.ismilestone attributes.ismilestone
+        xml.utilized attributes.utilized
+        xml.priority attributes.priority
+        xml.taskno attributes.taskno
+        xml.taskstatus attributes.taskstatus
+        xml.parenttaskname attributes.parenttaskname
+        xml.budgetqty attributes.budgetqty
+        xml.estqty attributes.estqty
 
-        if object.taskresources
+        if attributes.taskresources
           xml.taskresources {
-            object.taskresources.each do |taskresource|
+            attributes.taskresources.each do |taskresource|
               xml.employeeid tasresource.employeeid
             end
           }
         end
 
-        if object.customfields
+        if attributes.customfields
           xml.customfields {
-            object.customfields.each do |customfield|
+            attributes.customfields.each do |customfield|
               xml.customfield {
                 xml.customfieldname customfield.name
                 xml.customfieldvalue customfield.value

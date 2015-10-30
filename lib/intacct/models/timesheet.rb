@@ -3,16 +3,16 @@ module Intacct
     class Timesheet < Intacct::Base
 
       def create_xml(xml)
-        xml.employeeid object.employeeid
+        xml.employeeid attributes.employeeid
         xml.begindate {
-          xml.year object.begindate.try(:strftime, "%Y")
-          xml.month object.begindate.try(:strftime, "%m")
-          xml.day object.begindate.try(:strftime, "%d")
+          xml.year attributes.begindate.try(:strftime, "%Y")
+          xml.month attributes.begindate.try(:strftime, "%m")
+          xml.day attributes.begindate.try(:strftime, "%d")
         }
-        xml.timesheetdescription object.timesheetdescriptiontime
+        xml.timesheetdescription attributes.timesheetdescriptiontime
 
         xml.timesheetitems {
-          object.timesheetitems.each { |timesheetitem|
+          attributes.timesheetitems.each { |timesheetitem|
             xml.timesheetitem {
               xml.customerid timesheetitem[:customerid]
               xml.itemid timesheetitem[:itemid]
@@ -32,9 +32,9 @@ module Intacct
               xml.vendorid timesheetitem[:vendorid]
               xml.classid timesheetitem[:classid]
 
-              if object.customfields
+              if attributes.customfields
                 xml.customfields {
-                  object.customfields.each { |customfield|
+                  attributes.customfields.each { |customfield|
                     xml.customfield {
                       xml.customfieldname customfield[:customfieldname]
                       xml.customfieldvalue customfield[:customfieldvalue]

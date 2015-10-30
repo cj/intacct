@@ -29,6 +29,8 @@ module Intacct
       end
 
       def list_type
+        binding.pry
+
         @response.at('//result/listtype').content
       end
 

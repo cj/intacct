@@ -6,28 +6,28 @@ module Intacct
       api_name 'ARINVOICE'
 
       def create
-        return false if object.invoice.intacct_system_id.present?
+        return false if attributes.invoice.intacct_system_id.present?
 
         # Need to create the customer if one doesn't exist
-        intacct_customer = Intacct::Customer.new object.customer
-        unless object.customer.intacct_system_id.present?
+        intacct_customer = Intacct::Customer.new attributes.customer
+        unless attributes.customer.intacct_system_id.present?
           unless intacct_customer.create
             raise 'Could not create customer'
           end
         end
 
         if intacct_customer.get
-          object.customer = intacct_customer.object
+          attributes.customer = intacct_customer.attributes
           @customer_data = intacct_customer.data
         else
           raise 'Could not grab Intacct customer data'
         end
 
         # Create vendor if we have one and not in Intacct
-        if object.vendor and object.vendor.intacct_system_id.blank?
-          intacct_vendor = Intacct::Vendor.new object.vendor
+        if attributes.vendor and attributes.vendor.intacct_system_id.blank?
+          intacct_vendor = Intacct::Vendor.new attributes.vendor
           if intacct_vendor.create
-            object.vendor = intacct_vendor.object
+            attributes.vendor = intacct_vendor.attributes
           else
             raise 'Could not create vendor'
           end
@@ -45,11 +45,11 @@ module Intacct
       end
 
       def delete
-        return false unless object.invoice.intacct_system_id.present?
+        return false unless attributes.invoice.intacct_system_id.present?
 
         send_xml('delete') do |xml|
           xml.function(controlid: "1") {
-            xml.delete_invoice(externalkey: "false", key: object.invoice.intacct_key)
+            xml.delete_invoice(externalkey: "false", key: attributes.invoice.intacct_key)
           }
         end
 
@@ -57,15 +57,15 @@ module Intacct
       end
 
       def intacct_object_id
-        "#{intacct_invoice_prefix}#{object.invoice.id}"
+        "#{intacct_invoice_prefix}#{attributes.invoice.id}"
       end
 
       def invoice_xml(xml)
-        xml.customerid "#{object.customer.intacct_system_id}"
+        xml.customerid "#{attributes.customer.intacct_system_id}"
         xml.datecreated {
-          xml.year object.invoice.created_at.strftime("%Y")
-          xml.month object.invoice.created_at.strftime("%m")
-          xml.day object.invoice.created_at.strftime("%d")
+          xml.year attributes.invoice.created_at.strftime("%Y")
+          xml.month attributes.invoice.created_at.strftime("%m")
+          xml.day attributes.invoice.created_at.strftime("%d")
         }
 
         termname = customer_data.termname
@@ -76,25 +76,25 @@ module Intacct
       end
 
       def set_intacct_system_id
-        object.invoice.intacct_system_id = intacct_object_id
+        attributes.invoice.intacct_system_id = intacct_object_id
       end
 
       def set_intacct_key(key)
-        object.invoice.intacct_key = key
+        attributes.invoice.intacct_key = key
       end
 
       def delete_intacct_system_id
-        object.invoice.intacct_system_id = nil
+        attributes.invoice.intacct_system_id = nil
       end
 
       def delete_intacct_key
-        object.invoice.intacct_key = nil
+        attributes.invoice.intacct_key = nil
       end
 
       def set_date_time(type)
         if %w(create update delete).include? type
-          if object.invoice.respond_to? :"intacct_#{type}d_at"
-            object.invoice.send("intacct_#{type}d_at=", DateTime.now)
+          if attributes.invoice.respond_to? :"intacct_#{type}d_at"
+            attributes.invoice.send("intacct_#{type}d_at=", DateTime.now)
           end
         end
       end

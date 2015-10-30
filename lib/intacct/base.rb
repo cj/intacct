@@ -1,5 +1,5 @@
 module Intacct
-  class Base < Struct.new(:client, :object)
+  class Base < Struct.new(:client, :attributes)
     include Intacct::Actions
 
     attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors
@@ -17,7 +17,7 @@ module Intacct
     # def self.get(client, key, options = {})
     #   send_xml(client, 'get') do |xml|
     #     xml.function(controlid: "f4") {
-    #       xml.get(object: api_name, key: key) {
+    #       xml.get(attributes: api_name, key: key) {
     #
     #         if options[:fields]
     #           xml.fields {
@@ -35,7 +35,7 @@ module Intacct
     #   send_xml(client, 'read') do |xml|
     #     xml.function(controlid: 'f4') {
     #       xml.read {
-    #         xml.object api_name.upcase
+    #         xml.attributes api_name.upcase
     #         xml.keys key
     #         xml.fields '*'
     #         xml.returnFormat 'xml'
@@ -48,7 +48,7 @@ module Intacct
     #   send_xml(client, 'readByQuery') do |xml|
     #     xml.function(controlid: 'f4') {
     #       xml.readByQuery {
-    #         xml.object api_name.upcase
+    #         xml.attributes api_name.upcase
     #         xml.query query
     #         xml.fields '*'
     #         xml.returnFormat 'xml'
@@ -67,9 +67,9 @@ module Intacct
     #
     #         xml.send("#{api_name}id", key)
     #
-    #         object.to_h.each { |key, value|
+    #         attributes.to_h.each { |key, value|
     #
-    #           object_attributes_to_xml(xml, key, value)
+    #           attributes_to_xml(xml, key, value)
     #
     #         }
     #
@@ -85,9 +85,9 @@ module Intacct
     #
     #         xml.send("#{api_name}id", key)
     #
-    #         sliced_object.each { |key, value|
+    #         sliced_attributes.each { |key, value|
     #
-    #           object_attributes_to_xml(xml, key, value)
+    #           attributes_to_xml(xml, key, value)
     #
     #         }
     #
@@ -97,25 +97,25 @@ module Intacct
     # end
 
     def key
-      @key ||= (object.key || random_object_id)
+      @key ||= (attributes.key || random_attributes_id)
     end
 
     def key=(value)
-      object.key = value
+      attributes.key = value
     end
 
     def method_missing(method_name, *args, &block)
       stripped_method_name = method_name.to_s.gsub(/=$/, '')
 
-      if stripped_method_name.to_sym.in? self.object.to_h.keys
-        self.object.send(method_name, *args)
+      if stripped_method_name.to_sym.in? self.attributes.to_h.keys
+        self.attributes.send(method_name, *args)
       else
         super method_name, *args
       end
     end
 
     def respond_to_missing?(method_name, *args)
-      if method_name.in? self.object.to_h.keys
+      if method_name.in? self.attributes.to_h.keys
         true
       else
         super method_name, *args
@@ -136,17 +136,17 @@ module Intacct
       self.class.read_only_fields
     end
 
-    def object_attributes_to_xml(xml, key, value)
+    def attributes_to_xml(xml, key, value)
       if value.is_a?(Hash)
         xml.send(key) {
           value.each do |k,v|
-            object_attributes_to_xml(xml, k, v)
+            attributes_to_xml(xml, k, v)
           end
         }
       elsif value.is_a?(Array)
         value.each do |val|
           val.each do |k,v|
-            object_attributes_to_xml(xml, k, v)
+            attributes_to_xml(xml, k, v)
           end
         end
       else
@@ -154,8 +154,8 @@ module Intacct
       end
     end
 
-    def sliced_object
-      object.to_h.except(*read_only_fields, :key, :whenmodified)
+    def sliced_attributes
+      attributes.to_h.except(*read_only_fields, :key, :whenmodified)
     end
 
     %w(invoice bill vendor customer project).each do |type|
@@ -173,14 +173,14 @@ module Intacct
     end
 
     def intacct_system_id
-      intacct_object_id
+      intacct_attributes_id
     end
 
-    def intacct_object_id
-      object.id ? "#{intacct_customer_prefix}#{object.id}" : random_object_id
+    def intacct_attributes_id
+      attributes.id ? "#{intacct_customer_prefix}#{attributes.id}" : random_attributes_id
     end
 
-    def random_object_id
+    def random_attributes_id
       SecureRandom.random_number.to_s
     end
 

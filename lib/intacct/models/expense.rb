@@ -5,19 +5,19 @@ module Intacct
       api_name 'EEXPENSES'
 
       def create_xml(xml)
-        xml.employeeid object.employeeid
+        xml.employeeid attributes.employeeid
         xml.datecreated  {
-          xml.year  object.datecreated.try(:strftime, "%Y")
-          xml.month object.datecreated.try(:strftime, "%m")
-          xml.day   object.datecreated.try(:strftime, "%d")
+          xml.year  attributes.datecreated.try(:strftime, "%Y")
+          xml.month attributes.datecreated.try(:strftime, "%m")
+          xml.day   attributes.datecreated.try(:strftime, "%d")
         }
-        xml.expensereportno object.expensereportno
-        xml.description     object.description
-        xml.basecurr        object.basecurr
-        xml.currency        object.currency
+        xml.expensereportno attributes.expensereportno
+        xml.description     attributes.description
+        xml.basecurr        attributes.basecurr
+        xml.currency        attributes.currency
 
         xml.expenses {
-          object.expenses.each { |expense|
+          attributes.expenses.each { |expense|
             xml.expense {
               xml.expensetype  expense[:expensetype]
               xml.amount       expense[:amount]
@@ -35,20 +35,20 @@ module Intacct
       end
 
       def update_xml(xml)
-        xml.employeeid object.employeeid
+        xml.employeeid attributes.employeeid
         xml.datecreated  {
-          xml.year  object.datecreated.try(:strftime, "%Y")
-          xml.month object.datecreated.try(:strftime, "%m")
-          xml.day   object.datecreated.try(:strftime, "%d")
+          xml.year  attributes.datecreated.try(:strftime, "%Y")
+          xml.month attributes.datecreated.try(:strftime, "%m")
+          xml.day   attributes.datecreated.try(:strftime, "%d")
         }
-        xml.expensereportno object.expensereportno
-        xml.description     object.description
-        xml.basecurr        object.basecurr
-        xml.currency        object.currency
+        xml.expensereportno attributes.expensereportno
+        xml.description     attributes.description
+        xml.basecurr        attributes.basecurr
+        xml.currency        attributes.currency
 
-        if object.customfields
+        if attributes.customfields
           xml.customfields {
-            object.customfields.each do |customfield|
+            attributes.customfields.each do |customfield|
               xml.customfield {
                 xml.customfieldname customfield.name
                 xml.customfieldvalue customfield.value
@@ -58,7 +58,7 @@ module Intacct
         end
 
         xml.updateexpenses {
-          object.updateexpenses.each { |updateexpense|
+          attributes.updateexpenses.each { |updateexpense|
             xml.updateexpense {
               xml.expensetype  updateexpense[:expensetype]
               xml.glaccountno  updateexpense[:glaccountno]
