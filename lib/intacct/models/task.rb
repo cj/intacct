@@ -2,29 +2,7 @@ module Intacct
   module Models
     class Task < Intacct::Base
 
-      def create
-        send_xml('create') do |xml|
-          xml.function(controlid: "1") {
-            xml.create_task {
-              task_xml(xml)
-            }
-          }
-        end
-      end
-
-      def update
-        send_xml('update') do |xml|
-          xml.function(controlid: '1') {
-            xml.update_task(key: key) {
-              task_xml(xml)
-            }
-          }
-        end
-      end
-
-      private
-
-      def task_xml(xml)
+      def create_xml(xml)
         xml.taskname object.taskname
         xml.projectid object.projectid
         xml.pbegindate  {
@@ -67,6 +45,10 @@ module Intacct
             end
           }
         end
+      end
+
+      def update_xml(xml)
+        create_xml(xml)
       end
 
     end

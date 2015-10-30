@@ -2,19 +2,7 @@ module Intacct
   module Models
     class Timesheet < Intacct::Base
 
-      def create
-        send_xml('create') do |xml|
-          xml.function(controlid: "1") {
-            xml.create_timesheet {
-              timesheet_xml(xml)
-            }
-          }
-        end
-      end
-
-      private
-
-      def timesheet_xml(xml)
+      def create_xml(xml)
         xml.employeeid object.employeeid
         xml.begindate {
           xml.year object.begindate.try(:strftime, "%Y")
@@ -57,6 +45,10 @@ module Intacct
             }
           }
         }
+      end
+
+      def update_xml(xml)
+        create_xml(xml)
       end
     end
   end

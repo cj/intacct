@@ -1,4 +1,4 @@
-$: << File.expand_path(File.dirname(__FILE__))
+# $: << File.expand_path(File.dirname(__FILE__))
 
 require 'intacct/version'
 require 'net/http'
@@ -6,6 +6,7 @@ require 'nokogiri'
 require 'hooks'
 require 'active_support/all'
 
+require 'intacct/actions'
 require 'intacct/base'
 require 'intacct/base_factory'
 require 'intacct/client'
@@ -13,6 +14,7 @@ require 'intacct/callbacks'
 require 'intacct/errors'
 require 'intacct/response'
 require 'intacct/xml_request'
+require 'intacct/utils'
 
 require 'intacct/models/project'
 require 'intacct/models/bill'

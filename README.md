@@ -44,7 +44,7 @@ Creating a new project
     
 Fetching a project
     
-    project = client.projects.get(PROJECT_ID)
+    project = client.projects.get(key: PROJECT_ID)
     
 Updating a project
     
@@ -53,7 +53,7 @@ Updating a project
     
 Querying
     
-    client.projects.read_by_query(QUERY STRING)
+    client.projects.read_by_query(query: QUERY STRING)
 
 ## Contributing
 

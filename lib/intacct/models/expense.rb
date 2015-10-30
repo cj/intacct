@@ -4,29 +4,7 @@ module Intacct
 
       api_name 'EEXPENSES'
 
-      def create
-        send_xml('create') do |xml|
-          xml.function(controlid: '1') {
-            xml.create_expense {
-              create_expense_xml(xml)
-            }
-          }
-        end
-      end
-
-      def update
-        send_xml('update') do |xml|
-          xml.function(controlid: '1') {
-            xml.update_expense(key: key) {
-              update_expense_xml(xml)
-            }
-          }
-        end
-      end
-
-      private
-
-      def create_expense_xml(xml)
+      def create_xml(xml)
         xml.employeeid object.employeeid
         xml.datecreated  {
           xml.year  object.datecreated.try(:strftime, "%Y")
@@ -56,7 +34,7 @@ module Intacct
         }
       end
 
-      def update_expense_xml(xml)
+      def update_xml(xml)
         xml.employeeid object.employeeid
         xml.datecreated  {
           xml.year  object.datecreated.try(:strftime, "%Y")

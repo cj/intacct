@@ -2,31 +2,7 @@ module Intacct
   module Models
     class Project < Intacct::Base
 
-      def create
-        send_xml('create') do |xml|
-          xml.function(controlid: "1") {
-            xml.create_project {
-              project_xml(xml)
-            }
-          }
-        end
-      end
-
-      def update
-        send_xml('update') do |xml|
-          xml.function(controlid: '1') {
-            xml.update_project(key: key) {
-              project_xml(xml)
-            }
-          }
-        end
-      end
-
-      read_only_fields :budgetduration, :percentcomplete, :supdocid, :contactinfo, :whenmodified
-
-      private
-
-      def project_xml(xml)
+      def create_xml(xml)
         xml.projectid key if key
         xml.name object.name
         xml.description object.description
@@ -93,7 +69,7 @@ module Intacct
 
         if object.customfields
           xml.customfields {
-            object.customfields.each { |customfield|
+            object.customfields.each { |label, customfield|
               xml.customfield {
                 xml.customfieldname customfield[:customfieldname]
                 xml.customfieldvalue customfield[:customfieldvalue]
@@ -102,6 +78,10 @@ module Intacct
           }
         end
 
+      end
+
+      def update_xml(xml)
+        create_xml(xml)
       end
     end
   end

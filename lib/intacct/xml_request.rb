@@ -1,18 +1,18 @@
 module Intacct
   class XmlRequest
-
     include Intacct::Callbacks
 
     attr_accessor :client, :object, :action, :intacct_action, :model_class, :model
 
     URL = "https://www.intacct.com/ia/xml/xmlgw.phtml".freeze
 
-    def initialize(client, action, model_class, model)
+    def self.build_xml(client, action, &block)
+      new(client, action).build_xml(&block)
+    end
+
+    def initialize(client, action)
       @client      = client
       @action      = action
-      @model       = model
-      @object      = @model.try(:object) || OpenStruct.new
-      @model_class = model_class
     end
 
     def build_xml(&block)
@@ -20,7 +20,6 @@ module Intacct
         block.call(xml)
       end
     end
-
 
     private
 
@@ -59,10 +58,7 @@ module Intacct
       uri = URI(URL)
 
       res = Net::HTTP.post_form(uri, 'xmlrequest' => xml)
-      response = Nokogiri::XML(res.body)
-
-      Intacct::Response.new(client, response, model_class, intacct_action, model).handle_response
-
+      Nokogiri::XML(res.body)
     end
 
   end
