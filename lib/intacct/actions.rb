@@ -5,6 +5,7 @@ require 'intacct/actions/read_by_query'
 require 'intacct/actions/create'
 require 'intacct/actions/update'
 require 'intacct/actions/update_all'
+require 'intacct/actions/bulk_create'
 
 module Intacct
   module Actions
@@ -16,6 +17,7 @@ module Intacct
     include Intacct::Actions::Create::Helper
     include Intacct::Actions::Update::Helper
     include Intacct::Actions::UpdateAll::Helper
+    include Intacct::Actions::BulkCreate::Helper
 
   end
 end
