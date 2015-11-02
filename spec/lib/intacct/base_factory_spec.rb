@@ -19,9 +19,8 @@ describe Intacct::BaseFactory do
   end
 
   it "proxies read_by_query to the target class" do
-    pending
-    expect(Intacct::Models::Foo).to receive(:read_by_query).with(client, 'FOO')
-    subject.read_by_query('FOO = "BAR"')
+    expect(Intacct::Models::Foo).to receive(:read_by_query).with(client, query: 'FOO')
+    subject.read_by_query(query: 'FOO')
   end
 
   it "returns the target class" do

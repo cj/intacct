@@ -13,49 +13,6 @@ module Intacct
     def self.build(client, options = {})
       self.new(client, options)
     end
-    #
-    # def self.get(client, key, options = {})
-    #   send_xml(client, 'get') do |xml|
-    #     xml.function(controlid: "f4") {
-    #       xml.get(attributes: api_name, key: key) {
-    #
-    #         if options[:fields]
-    #           xml.fields {
-    #             fields.each do |field|
-    #               xml.field field.to_s
-    #             end
-    #           }
-    #         end
-    #       }
-    #     }
-    #   end
-    # end
-    #
-    # def self.read(client, key, options = {})
-    #   send_xml(client, 'read') do |xml|
-    #     xml.function(controlid: 'f4') {
-    #       xml.read {
-    #         xml.attributes api_name.upcase
-    #         xml.keys key
-    #         xml.fields '*'
-    #         xml.returnFormat 'xml'
-    #       }
-    #     }
-    #   end
-    # end
-    #
-    # def self.read_by_query(client, query)
-    #   send_xml(client, 'readByQuery') do |xml|
-    #     xml.function(controlid: 'f4') {
-    #       xml.readByQuery {
-    #         xml.attributes api_name.upcase
-    #         xml.query query
-    #         xml.fields '*'
-    #         xml.returnFormat 'xml'
-    #       }
-    #     }
-    #   end
-    # end
 
     # NOTE(AB): This is a WIP. Intacct is pedantic about the order of fields in the request
     #           We should probably specify the order of fields on the model and then rearrange
@@ -128,10 +85,6 @@ module Intacct
 
     private
 
-    def send_xml(action = nil, &block)
-      self.class.send_xml(client, action, self, &block)
-    end
-
     def read_only_fields
       self.class.read_only_fields
     end
@@ -191,11 +144,6 @@ module Intacct
 
     def self.api_name(name = nil)
       @api_name ||= (name || self.name.to_s.demodulize.downcase)
-    end
-
-    def self.send_xml(client, action, model = nil, &block)
-      builder = Intacct::XmlRequest.new(client, action, self, model)
-      builder.build_xml(&block)
     end
 
     def self.read_only_fields(*args)
