@@ -32,7 +32,7 @@ module Intacct
 
       def response_errors
         raw = @response.at('//result/errormessage')
-        return unless raw
+        return [] unless raw
 
         Hash.from_xml(raw.to_xml)['errormessage']['error']
       end

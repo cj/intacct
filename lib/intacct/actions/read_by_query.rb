@@ -28,8 +28,6 @@ module Intacct
         @response.at("//result/data").attributes['listtype'].content
       end
 
-
-
       module Helper
         extend ActiveSupport::Concern
 
@@ -45,6 +43,8 @@ module Intacct
               else
                 new(client, response.body)
               end
+            elsif response.error?
+              response.errors
             end
           end
         end
