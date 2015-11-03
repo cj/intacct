@@ -2,7 +2,8 @@ module Intacct
   class Base < Struct.new(:client, :attributes)
     include Intacct::Actions
 
-    attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors
+    attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors, :persisted
+    alias_method :persisted?, :persisted
 
     def initialize(client, *args)
       @client = client
@@ -14,51 +15,8 @@ module Intacct
       self.new(client, options)
     end
 
-    # NOTE(AB): This is a WIP. Intacct is pedantic about the order of fields in the request
-    #           We should probably specify the order of fields on the model and then rearrange
-    #           the model attributes when preparing the request.
-    # def create
-    #   send_xml('create') do |xml|
-    #     xml.function(controlid: '1') {
-    #       xml.send("create_#{api_name}") {
-    #
-    #         xml.send("#{api_name}id", key)
-    #
-    #         attributes.to_h.each { |key, value|
-    #
-    #           attributes_to_xml(xml, key, value)
-    #
-    #         }
-    #
-    #       }
-    #     }
-    #   end
-    # end
-    #
-    # def update
-    #   send_xml('update') do |xml|
-    #     xml.function(controlid: '1') {
-    #       xml.send("update_#{api_name}", key: key) {
-    #
-    #         xml.send("#{api_name}id", key)
-    #
-    #         sliced_attributes.each { |key, value|
-    #
-    #           attributes_to_xml(xml, key, value)
-    #
-    #         }
-    #
-    #       }
-    #     }
-    #   end
-    # end
-
-    def key
-      @key ||= (attributes.key || random_attributes_id)
-    end
-
-    def key=(value)
-      attributes.key = value
+    def id_attribute
+      self.class.id_attribute
     end
 
     def method_missing(method_name, *args, &block)
@@ -108,7 +66,7 @@ module Intacct
     end
 
     def sliced_attributes
-      attributes.to_h.except(*read_only_fields, :key, :whenmodified)
+      attributes.to_h.except(*read_only_fields, :whenmodified)
     end
 
     %w(invoice bill vendor customer project).each do |type|
@@ -144,6 +102,11 @@ module Intacct
 
     def self.api_name(name = nil)
       @api_name ||= (name || self.name.to_s.demodulize.downcase)
+    end
+
+    def self.id_attribute(attr = nil)
+      @id_attribute = (attr || "#{self.name.to_s_demodulize.downcase}id") if attr
+      @id_attribute
     end
 
     def self.read_only_fields(*args)

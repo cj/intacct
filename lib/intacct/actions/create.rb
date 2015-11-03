@@ -26,7 +26,7 @@ module Intacct
           response = Intacct::Actions::Create.new(client, self, 'create', options).perform
 
           if response.success?
-            self.key = response.body[:key]
+            self.persisted = true
             true
           else
             false

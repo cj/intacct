@@ -3,7 +3,7 @@ module Intacct
     class Project < Intacct::Base
 
       def create_xml(xml)
-        xml.projectid key if key
+        xml.projectid attributes.projectid
         xml.name attributes.name
         xml.description attributes.description
         xml.parentid attributes.parentid
