@@ -25,6 +25,7 @@ require 'intacct/models/task'
 require 'intacct/models/timesheet'
 require 'intacct/models/expense'
 require 'intacct/models/employee'
+require 'intacct/models/department'
 
 
 class Object
