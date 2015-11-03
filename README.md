@@ -34,6 +34,17 @@ Then, when instantiating an `Intacct::Client` no arguments are necessary
 2) Provide credentials when instantiating an `Intacct::Client`
     
     client = Intacct::Client.new(xml_sender_id: ..., xml_password: ..., user_id: ..., password: ..., company_id: ...)
+    
+## Supported Objects
+
+Currently, the following objects are supported:
+
+- Department (read-only)
+- Employee (read-only)
+- Project
+- Task
+- Timesheet
+
 
 ## Usage
     

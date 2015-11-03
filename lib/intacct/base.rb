@@ -5,14 +5,22 @@ module Intacct
     attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors, :persisted
     alias_method :persisted?, :persisted
 
+    def self.build(client, options = {})
+      self.new(client, options)
+    end
+
     def initialize(client, *args)
       @client = client
       args[0] = OpenStruct.new(args[0]) if args[0].is_a? Hash
       super(client, *args)
     end
 
-    def self.build(client, options = {})
-      self.new(client, options)
+    def create_xml(xml)
+      raise NotImplementedError, 'This model does not support create.'
+    end
+
+    def update_xml(xml)
+      raise NotImplementedError, 'This model does not support update.'
     end
 
     def id_attribute
