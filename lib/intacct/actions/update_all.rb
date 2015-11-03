@@ -28,7 +28,7 @@ module Intacct
         include ActiveSupport::Concern
 
         module ClassMethods
-          def update_all(ids, attributes)
+          def update_all(client, ids, attributes)
             params = {
                 ids:        ids,
                 attributes: attributes
