@@ -13,7 +13,9 @@ module Intacct
       end
 
       def response_body
-        key = @response.at("//result/key").content
+        key = @response.at("//result/key").try(:content)
+        return unless key
+
         { key: key }
       end
 
@@ -24,6 +26,8 @@ module Intacct
       module Helper
         def create(options = {})
           response = Intacct::Actions::Create.new(client, self, 'create', options).perform
+
+          @errors = response.errors
 
           if response.success?
             self.persisted = true
