@@ -16,16 +16,17 @@ require 'intacct/response'
 require 'intacct/xml_request'
 require 'intacct/utils'
 
-require 'intacct/models/project'
 require 'intacct/models/bill'
 require 'intacct/models/customer'
-require 'intacct/models/vendor'
+require 'intacct/models/department'
+require 'intacct/models/employee'
+require 'intacct/models/expense'
 require 'intacct/models/invoice'
+require 'intacct/models/location'
+require 'intacct/models/project'
 require 'intacct/models/task'
 require 'intacct/models/timesheet'
-require 'intacct/models/expense'
-require 'intacct/models/employee'
-require 'intacct/models/department'
+require 'intacct/models/vendor'
 
 
 class Object
