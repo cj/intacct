@@ -23,7 +23,10 @@ module Intacct
         raw = @response.at("//result/data")
         return unless raw
 
-        Hash.from_xml(raw.to_xml)['data'][list_type]
+        parsed = Hash.from_xml(raw.to_xml)['data'][list_type]
+        return unless parsed
+
+        parsed.map(&:values).flatten
       end
 
       def list_type
@@ -45,7 +48,10 @@ module Intacct
             response = Intacct::Actions::BulkCreate.new(client, self, 'bulk_create', attributes).perform
 
             @errors = response.errors
-            response.success?
+
+            if response.success?
+              response.body
+            end
           end
         end
       end
