@@ -35,14 +35,11 @@ module Intacct
           def read_by_query(client, options = {})
             response = Intacct::Actions::ReadByQuery.new(client, self, 'read_by_query', options).perform
 
-            return unless response.body
+            return [] unless response.body
 
             if response.success?
-              if response.body.is_a?(Array)
-                response.body.map { |r| new(client, r) }
-              else
-                new(client, response.body)
-              end
+              [response.body].flatten.map { |r| new(client, r) }
+
             elsif response.error?
               response.errors
             end
