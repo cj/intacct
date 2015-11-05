@@ -32,7 +32,7 @@ module Intacct
           @errors = response.errors
 
           if response.success?
-            self.recordno  = response.body['recordno']
+            self.attributes.recordno  = response.body['recordno']
             true
           else
             false
