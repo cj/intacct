@@ -2,7 +2,7 @@ module Intacct
   class Base < Struct.new(:client, :attributes)
     include Intacct::Actions
 
-    attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors, :recordno
+    attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors
 
     def self.build(client, options = {})
       self.new(client, options)

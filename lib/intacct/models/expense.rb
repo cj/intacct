@@ -35,6 +35,7 @@ module Intacct
       end
 
       def update_xml(xml)
+        xml.recordno recordno
         xml.employeeid attributes.employeeid
         xml.datecreated  {
           xml.year  attributes.datecreated.try(:strftime, "%Y")
@@ -57,51 +58,52 @@ module Intacct
           }
         end
 
-        xml.updateexpenses {
-          attributes.updateexpenses.each { |updateexpense|
-            xml.updateexpense {
-              xml.expensetype  updateexpense[:expensetype]
-              xml.glaccountno  updateexpense[:glaccountno]
-              xml.amount       updateexpense[:amount]
-              xml.currency     updateexpense[:currency]
-              xml.trx_amount   updateexpense[:trx_amount]
-              xml.exchratedate  {
-                xml.year  updateexpense[:exchratedate].try(:strftime, "%Y")
-                xml.month updateexpense[:exchratedate].try(:strftime, "%m")
-                xml.day   updateexpense[:exchratedate].try(:strftime, "%d")
-              }
-              xml.exchratetype  updateexpense[:exchratetype]
-              xml.exchrate      updateexpense[:exchrate]
-              xml.expensedate  {
-                xml.year  updateexpense[:expensedate].try(:strftime, "%Y")
-                xml.month updateexpense[:expensedate].try(:strftime, "%m")
-                xml.day   updateexpense[:expensedate].try(:strftime, "%d")
-              }
-              xml.memo         updateexpense[:memo]
-              xml.locationid   updateexpense[:locationid]
-              xml.departmentid updateexpense[:departmentid]
-              if updateexpense[:customfields]
-                xml.customfields {
-                  updateexpense[:customfields].each do |customfield|
-                    xml.customfield {
-                      xml.customfieldname customfield[:name]
-                      xml.customfieldvalue customfield[:value]
-                    }
-                  end
+        if attributes.updateexpenses
+          xml.updateexpenses {
+            attributes.updateexpenses.each { |updateexpense|
+              xml.updateexpense {
+                xml.expensetype  updateexpense[:expensetype]
+                xml.glaccountno  updateexpense[:glaccountno]
+                xml.amount       updateexpense[:amount]
+                xml.currency     updateexpense[:currency]
+                xml.trx_amount   updateexpense[:trx_amount]
+                xml.exchratedate  {
+                  xml.year  updateexpense[:exchratedate].try(:strftime, "%Y")
+                  xml.month updateexpense[:exchratedate].try(:strftime, "%m")
+                  xml.day   updateexpense[:exchratedate].try(:strftime, "%d")
                 }
-              end
-              xml.projectid   updateexpense[:projectid]
-              xml.customerid  updateexpense[:customerid]
-              xml.vendorid    updateexpense[:vendorid]
-              xml.employeeid  updateexpense[:employeeid]
-              xml.itemid      updateexpense[:itemid]
-              xml.classid     updateexpense[:classid]
+                xml.exchratetype  updateexpense[:exchratetype]
+                xml.exchrate      updateexpense[:exchrate]
+                xml.expensedate  {
+                  xml.year  updateexpense[:expensedate].try(:strftime, "%Y")
+                  xml.month updateexpense[:expensedate].try(:strftime, "%m")
+                  xml.day   updateexpense[:expensedate].try(:strftime, "%d")
+                }
+                xml.memo         updateexpense[:memo]
+                xml.locationid   updateexpense[:locationid]
+                xml.departmentid updateexpense[:departmentid]
+                if updateexpense[:customfields]
+                  xml.customfields {
+                    updateexpense[:customfields].each do |customfield|
+                      xml.customfield {
+                        xml.customfieldname customfield[:name]
+                        xml.customfieldvalue customfield[:value]
+                      }
+                    end
+                  }
+                end
+                xml.projectid   updateexpense[:projectid]
+                xml.customerid  updateexpense[:customerid]
+                xml.vendorid    updateexpense[:vendorid]
+                xml.employeeid  updateexpense[:employeeid]
+                xml.itemid      updateexpense[:itemid]
+                xml.classid     updateexpense[:classid]
+              }
             }
           }
-        }
+        end
+
       end
-
-
     end
   end
 end

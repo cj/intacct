@@ -5,8 +5,10 @@ module Intacct
       def request(options)
         Intacct::XmlRequest.build_xml(client, action) do |xml|
           xml.function(controlid: "1") {
-            xml.send("update_#{klass.api_name}", { key: klass.key }) {
-              klass.update_xml(xml)
+            xml.update {
+              xml.send(klass.api_name) {
+                klass.update_xml(xml)
+              }
             }
           }
         end
