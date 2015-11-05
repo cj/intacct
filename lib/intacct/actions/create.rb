@@ -5,18 +5,20 @@ module Intacct
       def request(options)
         Intacct::XmlRequest.build_xml(client, action) do |xml|
           xml.function(controlid: "1") {
-            xml.send("create_#{klass.api_name}") {
-              klass.create_xml(xml)
+            xml.create {
+              xml.send(klass.api_name) {
+                klass.create_xml(xml)
+              }
             }
           }
         end
       end
 
       def response_body
-        key = @response.at("//result/key").try(:content)
-        return unless key
+        raw = @response.at("//result/data/#{klass.api_name}")
+        return unless raw
 
-        { key: key }
+        Utils.instance.downcase_keys(Hash.from_xml(raw.to_xml)[klass.api_name])
       end
 
       def list_type
@@ -30,7 +32,7 @@ module Intacct
           @errors = response.errors
 
           if response.success?
-            self.persisted = true
+            self.recordno  = response.body['recordno']
             true
           else
             false

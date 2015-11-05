@@ -2,8 +2,7 @@ module Intacct
   class Base < Struct.new(:client, :attributes)
     include Intacct::Actions
 
-    attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors, :persisted
-    alias_method :persisted?, :persisted
+    attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors, :recordno
 
     def self.build(client, options = {})
       self.new(client, options)
@@ -47,6 +46,10 @@ module Intacct
 
     def api_name
       self.class.api_name
+    end
+
+    def persisted?
+      !!recordno
     end
 
     private
