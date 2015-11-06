@@ -26,7 +26,7 @@ module Intacct
         parsed = Hash.from_xml(raw.to_xml)['data'][list_type]
         return unless parsed
 
-        parsed.map(&:values).flatten
+        parsed.values
       end
 
       def list_type

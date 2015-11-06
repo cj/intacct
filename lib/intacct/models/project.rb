@@ -3,6 +3,7 @@ module Intacct
     class Project < Intacct::Base
 
       def create_xml(xml)
+        xml.recordno attributes.recordno if attributes.recordno
         xml.projectid attributes.projectid
         xml.name attributes.name
         xml.description attributes.description

@@ -3,7 +3,8 @@ module Intacct
     class Task < Intacct::Base
 
       def create_xml(xml)
-        xml.taskname attributes.taskname
+        xml.recordno attributes.recordno if attributes.recordno
+        xml.name attributes.name
         xml.projectid attributes.projectid
         xml.pbegindate  {
           xml.year attributes.pbegindate.try(:strftime, "%Y")
