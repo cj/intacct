@@ -5,6 +5,7 @@ require 'net/http'
 require 'nokogiri'
 require 'hooks'
 require 'active_support/all'
+require 'intacct/init'
 
 require 'intacct/actions'
 require 'intacct/base'
