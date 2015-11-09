@@ -38,6 +38,9 @@ module Intacct
         xml.departmentid attributes.departmentid
         xml.locationid attributes.locationid
 
+        xml.managerid attributes.managerid
+
+        xml.classid attributes.classid
 
 
 
@@ -51,7 +54,6 @@ module Intacct
         # xml.salescontactid attributes.salescontactid
         # xml.departmentid attributes.departmentid
         # xml.locationid attributes.locationid
-        # # xml.classid attributes.classid
         # xml.billingtype attributes.billingtype
         # xml.termname attributes.termname
         # xml.docnumber attributes.docnumber

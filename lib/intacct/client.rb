@@ -32,7 +32,7 @@ module Intacct
 
     def models
       %w(bills customers invoices projects vendors timesheets employees expenses tasks departments
-         locations project_types project_statuses)
+         locations project_types project_statuses class_dimensions)
     end
   end
 end

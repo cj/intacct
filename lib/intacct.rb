@@ -18,6 +18,7 @@ require 'intacct/xml_request'
 require 'intacct/utils'
 
 require 'intacct/models/bill'
+require 'intacct/models/class_dimension'
 require 'intacct/models/customer'
 require 'intacct/models/department'
 require 'intacct/models/employee'
