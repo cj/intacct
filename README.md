@@ -75,7 +75,8 @@ Querying
 
 This library provides a class method to create multiple records of a single type (e.g. Project) in one transaction.
 
-    bulk_attributes = [{name: "Project 1", projectcategory: "Contract"}, {name: "Project 2", projectcategory: "Contract"}]
+    bulk_attributes = [ {name: "Project 1", projectcategory: "Contract"}, 
+                        {name: "Project 2", projectcategory: "Contract"} ]
 
     client.projects.bulk_create(bulk_attributes)
 
