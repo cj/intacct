@@ -42,6 +42,7 @@ module Intacct
 
         xml.classid attributes.classid
 
+        xml.docnumber attributes.docnumber
 
 
 
@@ -56,7 +57,6 @@ module Intacct
         # xml.locationid attributes.locationid
         # xml.billingtype attributes.billingtype
         # xml.termname attributes.termname
-        # xml.docnumber attributes.docnumber
         #
         # xml.billto attributes.billto
         # xml.shipto attributes.shipto
