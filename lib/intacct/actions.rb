@@ -2,6 +2,7 @@ require 'intacct/actions/base'
 require 'intacct/actions/get'
 require 'intacct/actions/read'
 require 'intacct/actions/read_by_query'
+require 'intacct/actions/read_more'
 require 'intacct/actions/create'
 require 'intacct/actions/update'
 require 'intacct/actions/update_all'
@@ -14,6 +15,7 @@ module Intacct
     include Intacct::Actions::Get::Helper
     include Intacct::Actions::Read::Helper
     include Intacct::Actions::ReadByQuery::Helper
+    include Intacct::Actions::ReadMore::Helper
     include Intacct::Actions::Create::Helper
     include Intacct::Actions::Update::Helper
     include Intacct::Actions::UpdateAll::Helper
