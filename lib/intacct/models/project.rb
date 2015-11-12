@@ -97,7 +97,7 @@ module Intacct
 
         if attributes.customfields
           xml.customfields {
-            attributes.customfields.each { |label, customfield|
+            attributes.customfields.each { |customfield|
               xml.customfield {
                 xml.customfieldname customfield[:customfieldname]
                 xml.customfieldvalue customfield[:customfieldvalue]
