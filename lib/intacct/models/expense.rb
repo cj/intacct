@@ -51,8 +51,8 @@ module Intacct
           xml.customfields {
             attributes.customfields.each do |customfield|
               xml.customfield {
-                xml.customfieldname customfield.name
-                xml.customfieldvalue customfield.value
+                xml.customfieldname customfield[:customfieldname]
+                xml.customfieldvalue customfield[:customfieldvalue]
               }
             end
           }
