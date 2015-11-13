@@ -31,6 +31,7 @@ require 'intacct/models/project_status'
 require 'intacct/models/project_type'
 require 'intacct/models/task'
 require 'intacct/models/timesheet'
+require 'intacct/models/timesheet_entry'
 require 'intacct/models/vendor'
 
 

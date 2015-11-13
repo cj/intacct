@@ -4,12 +4,8 @@ module Intacct
 
       def create_xml(xml)
         xml.employeeid attributes.employeeid
-        xml.begindate {
-          xml.year attributes.begindate.try(:strftime, "%Y")
-          xml.month attributes.begindate.try(:strftime, "%m")
-          xml.day attributes.begindate.try(:strftime, "%d")
-        }
-        xml.timesheetdescription attributes.timesheetdescriptiontime
+        xml.begindate attributes.begindate.try(:strftime, '%Y-%m-%d')
+        xml.description attributes.description
 
         xml.timesheetitems {
           attributes.timesheetitems.each { |timesheetitem|
@@ -17,17 +13,15 @@ module Intacct
               xml.customerid timesheetitem[:customerid]
               xml.itemid timesheetitem[:itemid]
               xml.projectid timesheetitem[:projectid]
+              xml.taskkey timesheetitem[:taskkey]
               xml.taskname timesheetitem[:taskname]
               xml.timetype timesheetitem[:timetype]
               xml.locationid timesheetitem[:locationid]
               xml.departmentid timesheetitem[:departmentid]
-              xml.entrydate {
-                xml.year timesheetitem[:entrydate].try(:strftime, "%Y")
-                xml.month timesheetitem[:entrydate].try(:strftime, "%m")
-                xml.day timesheetitem[:entrydate].try(:strftime, "%d")
-              }
+
+              xml.entrydate timesheetitem[:entrydate].try(:strftime, '%Y-%m-%d')
+              xml.billable timesheetitem[:billable]
               xml.qty timesheetitem[:qty]
-              xml.timesheetentrydescription timesheetitem[:timesheetentrydescription]
               xml.notes timesheetitem[:notes]
               xml.vendorid timesheetitem[:vendorid]
               xml.classid timesheetitem[:classid]
