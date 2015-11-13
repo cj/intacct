@@ -6,16 +6,10 @@ module Intacct
         xml.recordno attributes.recordno if attributes.recordno
         xml.name attributes.name
         xml.projectid attributes.projectid
-        xml.pbegindate  {
-          xml.year attributes.pbegindate.try(:strftime, "%Y")
-          xml.month attributes.pbegindate.try(:strftime, "%m")
-          xml.day attributes.pbegindate.try(:strftime, "%d")
-        }
-        xml.penddate {
-          xml.year attributes.penddate.try(:strftime, "%Y")
-          xml.month attributes.penddate.try(:strftime, "%m")
-          xml.day attributes.penddate.try(:strftime, "%d")
-        }
+
+        xml.pbegindate attributes.begindate.try(:strftime, '%m/%d/%Y')
+        xml.penddate attributes.enddate.try(:strftime, '%m/%d/%Y')
+
         xml.itemid attributes.itemid
         xml.billable attributes.billable
         xml.taxdescription attributes.taxdescription
