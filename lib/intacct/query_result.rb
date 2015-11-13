@@ -2,7 +2,7 @@ module Intacct
   class QueryResult
     attr_reader   :total_count
 
-    delegate :each, :count, :any?, :first, to: :results
+    delegate :each, :map, :count, :any?, :first, to: :results
 
     def initialize(client, response, klass)
       @client        = client
