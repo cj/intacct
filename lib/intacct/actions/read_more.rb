@@ -1,16 +1,18 @@
 module Intacct
   module Actions
-    class ReadByQuery < Base
+    class ReadMore < Base
 
       def request(options)
         Intacct::XmlRequest.build_xml(client, action) do |xml|
           xml.function(controlid: 'f4') {
-            xml.readByQuery {
-              xml.object       klass.api_name.upcase
-              xml.query        options.fetch(:query, '')
-              xml.pagesize     options.fetch(:page_size, 1000)
-              xml.fields       options.fetch(:fields, '*')
-              xml.returnFormat options.fetch(:return_format, 'xml')
+            xml.readMore {
+
+              if options[:result_id]
+                xml.resultId options[:result_id]
+              else
+                xml.object klass.api_name
+              end
+
             }
           }
         end
@@ -38,20 +40,15 @@ module Intacct
         extend ActiveSupport::Concern
 
         module ClassMethods
-          def read_by_query(client, options = {})
-            response = Intacct::Actions::ReadByQuery.new(client, self, 'read_by_query', options).perform
-
-            return [] unless response.body
+          def read_more(client, options)
+            response = Intacct::Actions::ReadMore.new(client, self, 'read_more', options).perform
 
             if response.success?
-              Intacct::QueryResult.new(client, response, self)
-            elsif response.error?
-              response.errors
+              response
             end
           end
         end
       end
-
     end
   end
 end

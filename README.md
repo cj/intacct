@@ -39,9 +39,14 @@ Then, when instantiating an `Intacct::Client` no arguments are necessary
 
 Currently, the following objects are supported:
 
+- Class (named ClassDimension) (read-only)
 - Department (read-only)
 - Employee (read-only)
+- Expense
+- Location (read-only)
 - Project
+- Project Status (read-only)
+- Project Type (read-only)
 - Task
 - Timesheet
 
@@ -50,12 +55,12 @@ Currently, the following objects are supported:
     
 Creating a new project
 
-    project = client.projects.build(name: "New Project", project_category: "Contract")
+    project = client.projects.build(name: "New Project", projectcategory: "Contract")
     project.create
     
 Fetching a project
     
-    project = client.projects.get(key: PROJECT_ID)
+    project = client.projects.read(key: PROJECT_ID)
     
 Updating a project
     
@@ -65,6 +70,15 @@ Updating a project
 Querying
     
     client.projects.read_by_query(query: QUERY STRING)
+
+## Bulk Creating Records
+
+This library provides a class method to create multiple records of a single type (e.g. Project) in one transaction.
+
+    bulk_attributes = [ {name: "Project 1", projectcategory: "Contract"}, 
+                        {name: "Project 2", projectcategory: "Contract"} ]
+
+    client.projects.bulk_create(bulk_attributes)
 
 ## Contributing
 
