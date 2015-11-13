@@ -2,7 +2,7 @@ module Intacct
   class QueryResult
     attr_reader   :total_count
 
-    delegate :each, to: :results
+    delegate :each, :count, :any?, :first, to: :results
 
     def initialize(client, response, klass)
       @client        = client
@@ -16,21 +16,23 @@ module Intacct
     end
 
     def results(options = { all: true })
-      if options[:all]
-        data = [ @results ]
+      records = if options[:all]
+                  data = [ @results ]
 
-        until num_remaining.zero?
-          data << next_batch
-        end
+                  until num_remaining.zero?
+                    data << next_batch
+                  end
 
-        data.flatten
-      else
-        @results
-      end
+                  data.flatten
+                else
+                  @results
+                end
+
+      records.map { |r| klass.new(client, r)}
+
     end
 
     private
-
 
     attr_reader :response, :client, :klass, :count, :num_remaining
 
