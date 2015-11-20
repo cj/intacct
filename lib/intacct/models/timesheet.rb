@@ -6,25 +6,30 @@ module Intacct
         xml.employeeid attributes.employeeid
         xml.begindate attributes.begindate.try(:strftime, '%Y-%m-%d')
         xml.description attributes.description
+        xml.state attributes.state
+        xml.lines attributes.lines
 
-        xml.timesheetitems {
-          attributes.timesheetitems.each { |timesheetitem|
-            xml.timesheetitem {
-              xml.customerid timesheetitem[:customerid]
-              xml.itemid timesheetitem[:itemid]
-              xml.projectid timesheetitem[:projectid]
-              xml.taskkey timesheetitem[:taskkey]
-              xml.taskname timesheetitem[:taskname]
-              xml.timetype timesheetitem[:timetype]
-              xml.locationid timesheetitem[:locationid]
-              xml.departmentid timesheetitem[:departmentid]
+        xml.timesheetentries {
+          attributes.timesheetentries.each { |timesheetentry|
+            xml.timesheetentry {
+              xml.lineno timesheetentry[:lineno]
+              xml.projectid timesheetentry[:projectid]
+              xml.taskkey timesheetentry[:taskkey]
+              xml.customerid timesheetentry[:customerid]
+              xml.itemid timesheetentry[:itemid]
+              xml.entrydate timesheetentry[:entrydate].try(:strftime, '%m/%d/%Y')
+              xml.qty timesheetentry[:qty]
+              xml.description timesheetentry[:description]
+              xml.notes timesheetentry[:notes]
+              xml.state timesheetentry[:state]
+              xml.locationid timesheetentry[:locationid]
+              xml.departmentid timesheetentry[:departmentid]
+              xml.timetype timesheetentry[:timetype]
+              xml.billable timesheetentry[:billable]
 
-              xml.entrydate timesheetitem[:entrydate].try(:strftime, '%Y-%m-%d')
-              xml.billable timesheetitem[:billable]
-              xml.qty timesheetitem[:qty]
-              xml.notes timesheetitem[:notes]
-              xml.vendorid timesheetitem[:vendorid]
-              xml.classid timesheetitem[:classid]
+              xml.vendorid timesheetentry[:vendorid]
+              xml.classid timesheetentry[:classid]
+
 
               if attributes.customfields
                 xml.customfields {
