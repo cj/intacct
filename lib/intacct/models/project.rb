@@ -85,10 +85,10 @@ module Intacct
           xml.projectresources {
             attributes.projectresources.each { |projectresource|
               xml.projectresource {
-                xml.employeeid projectresource.employeeid
-                xml.itemid projectresource.itemid
-                xml.resourcedescription projectresource.resoucedescription
-                xml.billingrate projectresource.billingrate
+                xml.employeeid projectresource[:employeeid]
+                xml.itemid projectresource[:itemid]
+                xml.resourcedescription projectresource[:resoucedescription]
+                xml.billingrate projectresource[:billingrate]
 
               }
             }
