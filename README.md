@@ -80,6 +80,15 @@ This library provides a class method to create multiple records of a single type
 
     client.projects.bulk_create(bulk_attributes)
 
+## The Intacct `inspect` action
+
+Intacct Web Services provides a method to inspect an object and its fields. To do so with this library, use the `inspect_object` action.
+
+    client.projects.inspect_object
+
+    # With detail
+    client.projects.inspect_object(detail: true)
+
 ## Contributing
 
 1. Fork it
