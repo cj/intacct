@@ -53,7 +53,6 @@ module Intacct
       end
 
       xml = builder.doc.root.to_xml
-      @sent_xml = xml
 
       uri = URI(URL)
 
