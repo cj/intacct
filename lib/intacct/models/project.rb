@@ -46,6 +46,7 @@ module Intacct
 
         xml.billingtype attributes.billingtype
 
+        xml.ponumber attributes.ponumber
 
         # xml.parentid attributes.parentid
         # # xml.invoicewithparent attributes.invoicewithparent
@@ -62,7 +63,6 @@ module Intacct
         # xml.shipto attributes.shipto
         #
         # xml.sonumber attributes.sonumber
-        # xml.ponumber attributes.ponumber
         # xml.poamount attributes.poamount
         # xml.pqnumber attributes.pqnumber
         # # xml.budgetedcost attributes.budgetedcost
