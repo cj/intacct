@@ -5,6 +5,7 @@ module Intacct
       def create_xml(xml)
         xml.recordno attributes.recordno if attributes.recordno
         xml.name attributes.name
+        xml.description attributes.description
         xml.projectid attributes.projectid
 
         xml.pbegindate attributes.begindate.try(:strftime, '%m/%d/%Y')

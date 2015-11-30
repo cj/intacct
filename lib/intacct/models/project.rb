@@ -44,6 +44,7 @@ module Intacct
 
         xml.docnumber attributes.docnumber
 
+        xml.billingtype attributes.billingtype
 
 
         # xml.parentid attributes.parentid
@@ -55,7 +56,6 @@ module Intacct
         # xml.salescontactid attributes.salescontactid
         # xml.departmentid attributes.departmentid
         # xml.locationid attributes.locationid
-        # xml.billingtype attributes.billingtype
         # xml.termname attributes.termname
         #
         # xml.billto attributes.billto
@@ -85,10 +85,10 @@ module Intacct
           xml.projectresources {
             attributes.projectresources.each { |projectresource|
               xml.projectresource {
-                xml.employeeid projectresource.employeeid
-                xml.itemid projectresource.itemid
-                xml.resourcedescription projectresource.resoucedescription
-                xml.billingrate projectresource.billingrate
+                xml.employeeid projectresource[:employeeid]
+                xml.itemid projectresource[:itemid]
+                xml.resourcedescription projectresource[:resoucedescription]
+                xml.billingrate projectresource[:billingrate]
 
               }
             }
