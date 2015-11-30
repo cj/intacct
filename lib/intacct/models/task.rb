@@ -8,8 +8,8 @@ module Intacct
         xml.description attributes.description
         xml.projectid attributes.projectid
 
-        xml.pbegindate attributes.begindate.try(:strftime, '%m/%d/%Y')
-        xml.penddate attributes.enddate.try(:strftime, '%m/%d/%Y')
+        xml.pbegindate attributes.pbegindate.try(:strftime, '%m/%d/%Y')
+        xml.penddate attributes.penddate.try(:strftime, '%m/%d/%Y')
 
         xml.itemid attributes.itemid
         xml.billable attributes.billable
