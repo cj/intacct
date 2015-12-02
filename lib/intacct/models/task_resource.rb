@@ -6,6 +6,7 @@ module Intacct
 
       def create_xml(xml)
         xml.taskname attributes.taskname
+        xml.projectid attributes.projectid
         xml.employeeid attributes.employeeid
         xml.pbegindate attributes.pbegindate
         xml.penddate attributes.penddate
