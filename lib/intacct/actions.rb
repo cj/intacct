@@ -8,6 +8,7 @@ require 'intacct/actions/update'
 require 'intacct/actions/update_all'
 require 'intacct/actions/bulk_create'
 require 'intacct/actions/inspect'
+require 'intacct/actions/delete'
 
 module Intacct
   module Actions
@@ -22,6 +23,7 @@ module Intacct
     include Intacct::Actions::UpdateAll::Helper
     include Intacct::Actions::BulkCreate::Helper
     include Intacct::Actions::Inspect::Helper
+    include Intacct::Actions::Delete::Helper
 
       # def actions(*args)
       #   args.each do |action|
