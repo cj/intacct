@@ -26,7 +26,7 @@ module Intacct
         if attributes.taskresources
           xml.taskresources {
             attributes.taskresources.each do |taskresource|
-              xml.employeeid tasresource.employeeid
+              xml.employeeid taskresource[:employeeid]
             end
           }
         end
@@ -35,8 +35,8 @@ module Intacct
           xml.customfields {
             attributes.customfields.each do |customfield|
               xml.customfield {
-                xml.customfieldname customfield.name
-                xml.customfieldvalue customfield.value
+                xml.customfieldname customfield[:customfieldname]
+                xml.customfieldvalue customfield[:customfieldvalue]
               }
             end
           }
