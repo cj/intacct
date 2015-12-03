@@ -30,7 +30,14 @@ module Intacct
         def delete(options = {})
           options.merge! key: recordno
 
-          self.class.delete(client, options)
+          success = self.class.delete(client, options)
+
+          if success
+            self.attributes.recordno = nil
+            true
+          else
+            false
+          end
         end
 
         module ClassMethods
