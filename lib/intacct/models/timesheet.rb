@@ -9,6 +9,17 @@ module Intacct
         xml.state attributes.state
         xml.lines attributes.lines
 
+        if attributes.customfields
+          xml.customfields {
+            attributes.customfields.each { |customfield|
+              xml.customfield {
+                xml.customfieldname customfield[:customfieldname]
+                xml.customfieldvalue customfield[:customfieldvalue]
+              }
+            }
+          }
+        end
+
         xml.timesheetentries {
           attributes.timesheetentries.each { |timesheetentry|
             xml.timesheetentry {
@@ -31,9 +42,9 @@ module Intacct
               xml.classid timesheetentry[:classid]
 
 
-              if attributes.customfields
+              if timesheetentry[:customfields]
                 xml.customfields {
-                  attributes.customfields.each { |customfield|
+                  timesheetentry[:customfields].each { |customfield|
                     xml.customfield {
                       xml.customfieldname customfield[:customfieldname]
                       xml.customfieldvalue customfield[:customfieldvalue]
