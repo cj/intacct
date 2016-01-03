@@ -4,6 +4,8 @@ module Intacct
 
     attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors
 
+    delegate :formatted_error_message, to: :class
+
     def self.build(client, options = {})
       self.new(client, options)
     end
@@ -133,6 +135,10 @@ module Intacct
     def self.read_only_field(name)
       name_sym = name.to_sym
       read_only_fields << name_sym
+    end
+
+    def self.formatted_error_message(errors)
+      errors.map { |error| error['description'].presence || error['description2'] || 'Undefined error' }.join(' ')
     end
   end
 end

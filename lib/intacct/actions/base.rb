@@ -34,10 +34,10 @@ module Intacct
       end
 
       def response_errors
-        raw = @response.at('//result/errormessage')
+        raw = @response.at('//result/errormessage') || @response.at('//errormessage')
         return unless raw
 
-        Hash.from_xml(raw.to_xml)['errormessage']['error']
+        [Hash.from_xml(raw.to_xml)['errormessage']['error']].flatten
       end
 
       def list_type

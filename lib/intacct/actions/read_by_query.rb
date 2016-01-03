@@ -41,12 +41,10 @@ module Intacct
           def read_by_query(client, options = {})
             response = Intacct::Actions::ReadByQuery.new(client, self, 'read_by_query', options).perform
 
-            return [] unless response.body
-
             if response.success?
               Intacct::QueryResult.new(client, response, self)
-            elsif response.error?
-              response.errors
+            else
+              raise Intacct::Error, formatted_error_message(response.errors)
             end
           end
         end
