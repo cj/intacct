@@ -56,7 +56,7 @@ module Intacct
             if response.success?
               response.body
             else
-              raise Intacct::Error, formatted_error_message response.errors
+              raise Intacct::Error, formatted_error_message(response.errors)
             end
           end
         end
