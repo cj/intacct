@@ -16,7 +16,6 @@ module Intacct
         xml.preventexpense attributes.preventexpense
         xml.preventappo attributes.preventappo
         xml.preventgeninvoice attributes.preventgeninvoice
-        # xml.status attributes.status
 
         xml.begindate attributes.begindate.try(:strftime, '%m/%d/%Y')
         xml.enddate attributes.enddate.try(:strftime, '%m/%d/%Y')
@@ -48,38 +47,9 @@ module Intacct
 
         xml.ponumber attributes.ponumber
 
-        # xml.parentid attributes.parentid
-        # # xml.invoicewithparent attributes.invoicewithparent
-        # xml.projecttype attributes.projecttype
-        # xml.customerid attributes.customerid
-        # xml.managerid attributes.managerid
-        # xml.custuserid attributes.custuserid
-        # xml.salescontactid attributes.salescontactid
-        # xml.departmentid attributes.departmentid
-        # xml.locationid attributes.locationid
-        # xml.termname attributes.termname
-        #
-        # xml.billto attributes.billto
-        # xml.shipto attributes.shipto
-        #
-        # xml.sonumber attributes.sonumber
-        # xml.poamount attributes.poamount
-        # xml.pqnumber attributes.pqnumber
-        # # xml.budgetedcost attributes.budgetedcost
-        # # xml.budgetqty attributes.budgetqty
-        # xml.userrestrictions attributes.userRestrictions
-        # # xml.obspercentcomplete attributes.obspercentcomplete
-        # # xml.budgetid attributes.budgetid
-        # # xml.billingrate attributes.billingrate
-        # # xml.billingpricing attributes.billingpricing
-        # # xml.expenserate attributes.expenserate
-        # # xml.expensepricing attributes.expensepricing
-        # # xml.poaprate attributes.poaprate
-        # # xml.poappricing attributes.poappricing
-        # xml.status attributes.status
-        # # xml.supdocid attributes.supdocid
-        # # xml.invoicemessage attributes.invoicemessage
-        # # xml.invoicecurrency attributes.invoicecurrency
+        # Custom field for Mavenlink purposes
+        # TODO(AB): Remove this later
+        xml.mavenlink_id attributes.mavenlink_id
 
         if attributes.projectresources
           xml.projectresources {

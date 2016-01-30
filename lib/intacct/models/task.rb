@@ -23,6 +23,10 @@ module Intacct
         xml.budgetqty attributes.budgetqty
         xml.estqty attributes.estqty
 
+        # Custom field for Mavenlink
+        # TODO(AB): Remove this later
+        xml.mavenlink_id attributes.mavenlink_id
+
         if attributes.taskresources
           xml.taskresources {
             attributes.taskresources.each do |taskresource|
