@@ -41,6 +41,9 @@ module Intacct
               xml.vendorid timesheetentry[:vendorid]
               xml.classid timesheetentry[:classid]
 
+              xml.extbillrate timesheetentry[:extbillrate]
+              xml.extcostrate timesheetentry[:extcostrate]
+
 
               if timesheetentry[:customfields]
                 xml.customfields {
