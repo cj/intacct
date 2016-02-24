@@ -51,7 +51,7 @@ module Intacct
     end
 
     def persisted?
-      !!recordno
+      !!attributes['recordno']
     end
 
     private
