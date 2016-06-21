@@ -12,6 +12,7 @@ module Intacct
               xml.keys options[:key]
               xml.fields '*'
               xml.returnFormat 'xml'
+              xml.docparid options[:docparid] if options[:docparid].present?
             }
           }
         end
