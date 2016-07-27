@@ -7,6 +7,7 @@ require "faker"
 require "pry"
 require 'awesome_print'
 require 'helpers'
+require 'ostruct'
 
 Dotenv.load
 

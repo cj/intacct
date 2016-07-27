@@ -1,76 +1,91 @@
 module Intacct
-  class Base < Struct.new(:object, :current_user)
-    include Hooks
-    include Hooks::InstanceHooks
+  class Base < Struct.new(:client, :attributes)
+    include Intacct::Actions
 
-    define_hook :after_create, :after_update, :after_delete,
-      :after_get, :after_send_xml, :on_error, :before_create
+    attr_accessor  :client, :sent_xml, :intacct_action, :api_name, :errors
 
-    after_create :set_intacct_system_id
-    after_delete :delete_intacct_system_id
-    after_delete :delete_intacct_key
-    after_send_xml :set_date_time
+    delegate :formatted_error_message, to: :class
 
-    attr_accessor :response, :data, :sent_xml, :intacct_action
+    def self.build(client, options = {})
+      self.new(client, options)
+    end
 
-    def initialize *params
-      params[0] = OpenStruct.new(params[0]) if params[0].is_a? Hash
-      super(*params)
+    def initialize(client, *args)
+      @client = client
+      args[0] = OpenStruct.new(args[0]) if args[0].is_a? Hash
+      super(client, *args)
+    end
+
+    def create_xml(xml)
+      raise NotImplementedError, 'This model does not support create.'
+    end
+
+    def update_xml(xml)
+      raise NotImplementedError, 'This model does not support update.'
+    end
+
+    def id_attribute
+      self.class.id_attribute
+    end
+
+    def method_missing(method_name, *args, &block)
+      stripped_method_name = method_name.to_s.gsub(/=$/, '')
+
+      if stripped_method_name.to_sym.in? self.attributes.to_h.keys
+        self.attributes.send(method_name, *args)
+      else
+        super method_name, *args
+      end
+    end
+
+    def respond_to_missing?(method_name, *args)
+      if method_name.in? self.attributes.to_h.keys
+        true
+      else
+        super method_name, *args
+      end
+    end
+
+    def api_name
+      self.class.api_name
+    end
+
+    def persisted?
+      !!attributes['recordno']
     end
 
     private
 
-    def send_xml action
-      @intacct_action = action.to_s
-      run_hook :"before_#{intacct_action}" if action=="create"
+    def read_only_fields
+      self.class.read_only_fields
+    end
 
-      builder = Nokogiri::XML::Builder.new do |xml|
-        xml.request {
-          xml.control {
-            xml.senderid Intacct.xml_sender_id
-            xml.password Intacct.xml_password
-            xml.controlid "INVOICE XML"
-            xml.uniqueid "false"
-            xml.dtdversion "2.1"
-          }
-          xml.operation(transaction: "false") {
-            xml.authentication {
-              xml.login {
-                xml.userid Intacct.app_user_id
-                xml.companyid Intacct.app_company_id
-                xml.password Intacct.app_password
-              }
-            }
-            xml.content {
-              yield xml
-            }
-          }
+    def attributes_to_xml(xml, key, value)
+      if value.is_a?(Hash)
+        xml.send(key) {
+          value.each do |k,v|
+            attributes_to_xml(xml, k, v)
+          end
         }
-      end
-
-      xml = builder.doc.root.to_xml
-      @sent_xml = xml
-
-      url = "https://www.intacct.com/ia/xml/xmlgw.phtml"
-      uri = URI(url)
-
-      res = Net::HTTP.post_form(uri, 'xmlrequest' => xml)
-      @response = Nokogiri::XML(res.body)
-
-      if successful?
-        if key = response.at('//result//key')
-          set_intacct_key key.content
-        end
-
-        if intacct_action
-          run_hook :after_send_xml, intacct_action
-          run_hook :"after_#{intacct_action}"
+      elsif value.is_a?(Array)
+        value.each do |val|
+          val.each do |k,v|
+            attributes_to_xml(xml, k, v)
+          end
         end
       else
-        run_hook :on_error
+        xml.send(key, value)
       end
+    end
 
-      @response
+    def sliced_attributes
+      attributes.to_h.except(*read_only_fields, :whenmodified)
+    end
+
+    %w(invoice bill vendor customer project).each do |type|
+      define_method "intacct_#{type}_prefix" do
+        Intacct.send("#{type}_prefix")
+      end
     end
 
     def successful?
@@ -81,38 +96,49 @@ module Intacct
       end
     end
 
-    %w(invoice bill vendor customer).each do |type|
-      define_method "intacct_#{type}_prefix" do
-        Intacct.send("#{type}_prefix")
-      end
-    end
-
     def intacct_system_id
-      intacct_object_id
+      intacct_attributes_id
     end
 
-    def set_intacct_system_id
-      object.intacct_system_id = intacct_object_id
+    def intacct_attributes_id
+      attributes.id ? "#{intacct_customer_prefix}#{attributes.id}" : random_attributes_id
     end
 
-    def delete_intacct_system_id
-      object.intacct_system_id = nil
+    def random_attributes_id
+      SecureRandom.random_number.to_s
     end
 
-    def set_intacct_key key
-      object.intacct_key = key if object.respond_to? :intacct_key
+
+    #
+    # Class Methods
+    #
+
+    def self.api_name(name = nil)
+      @api_name ||= (name || self.name.to_s.demodulize.downcase)
     end
 
-    def delete_intacct_key
-      object.intacct_key = nil if object.respond_to? :intacct_key
+    def self.id_attribute(attr = nil)
+      @id_attribute = (attr || "#{self.name.to_s_demodulize.downcase}id") if attr
+      @id_attribute
     end
 
-    def set_date_time type
-      if %w(create update delete).include? type
-        if object.respond_to? :"intacct_#{type}d_at"
-          object.send("intacct_#{type}d_at=", DateTime.now)
+    def self.read_only_fields(*args)
+      if args.empty?
+        @read_only_fields ||= Set.new
+      else
+        args.each do |arg|
+          read_only_field arg
         end
       end
+    end
+
+    def self.read_only_field(name)
+      name_sym = name.to_sym
+      read_only_fields << name_sym
+    end
+
+    def self.formatted_error_message(errors)
+      [errors].flatten.map { |error| error['description'].presence || error['description2'] || 'Undefined error' }.join(' ')
     end
   end
 end

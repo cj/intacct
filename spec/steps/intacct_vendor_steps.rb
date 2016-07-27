@@ -2,7 +2,7 @@ module IntacctVendorSteps
   step('I have a vendor') { vendor }
 
   step 'I create an Intacct Vendor object' do
-    @intacct_vendor = Intacct::Vendor.new vendor
+    @intacct_vendor = Intacct::Models::Vendor.new vendor
   end
 
   step 'I use the #create method' do
