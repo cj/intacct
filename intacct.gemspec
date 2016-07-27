@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   # spec.license       = "MIT"
 
   spec.files = Dir["lib/**/*", "LICENSE.txt", "README.md"]
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.test_files    = Dir["spec/**/*"]
   spec.require_paths = ["lib"]
 
   spec.add_dependency "nokogiri"
