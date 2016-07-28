@@ -11,10 +11,9 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Ruby Intacct API Client}
   spec.homepage      = %q{http://github.com/mavenlink-solutions/intacct-ruby}
 
-  spec.files         = `git ls-files`.split('\n')
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.require_paths = ['lib']
+  spec.files = Dir["lib/**/*", "LICENSE.txt", "README.md"]
+  spec.test_files    = Dir["spec/**/*"]
+  spec.require_paths = ["lib"]
 
   spec.add_dependency 'nokogiri'
   spec.add_dependency 'hooks'
