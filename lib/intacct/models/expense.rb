@@ -2,7 +2,7 @@ module Intacct
   module Models
     class Expense < Intacct::Base
 
-      api_name 'expensereport'
+      api_name 'EEXPENSES'
 
       def create_xml(xml)
         xml.employeeid attributes.employeeid

@@ -6,7 +6,7 @@ module Intacct
         if klass.class == Intacct::Models::Expense
           Intacct::XmlRequest.build_xml(client, action) do |xml|
             xml.function(controlid: "1") {
-              xml.send("create_" + klass.api_name) {
+              xml.send("create_expensereport") {
                 klass.create_xml(xml)
               }
             }
