@@ -3,14 +3,24 @@ module Intacct
     class Create < Base
 
       def request(options)
-        Intacct::XmlRequest.build_xml(client, action) do |xml|
-          xml.function(controlid: "1") {
-            xml.create {
-              xml.send(klass.api_name) {
+        if klass.class == Intacct::Models::Expense
+          Intacct::XmlRequest.build_xml(client, action) do |xml|
+            xml.function(controlid: "1") {
+              xml.send("create_" + klass.api_name) {
                 klass.create_xml(xml)
               }
             }
-          }
+          end
+        else
+          Intacct::XmlRequest.build_xml(client, action) do |xml|
+            xml.function(controlid: "1") {
+              xml.create {
+                xml.send(klass.api_name) {
+                  klass.create_xml(xml)
+                }
+              }
+            }
+          end
         end
       end
 
@@ -32,7 +42,7 @@ module Intacct
           @errors = response.errors
 
           if response.success?
-            self.attributes.recordno  = response.body['recordno']
+            self.attributes.recordno  = response.body['recordno'] unless response.body.nil?
             true
           else
             false
