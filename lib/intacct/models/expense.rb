@@ -4,6 +4,10 @@ module Intacct
 
       api_name 'EEXPENSES'
 
+      def create_name
+        'create_expensereport'
+      end
+
       def create_xml(xml)
         xml.employeeid attributes.employeeid
         xml.datecreated  {
