@@ -19,20 +19,24 @@ module Intacct
         xml.description     attributes.description
         xml.basecurr        attributes.basecurr
         xml.currency        attributes.currency
+        xml.dateposted  {
+          xml.year  attributes.dateposted.try(:strftime, "%Y")
+          xml.month attributes.dateposted.try(:strftime, "%m")
+          xml.day   attributes.dateposted.try(:strftime, "%d")
+        }
 
         xml.expenses {
           attributes.expenses.each { |expense|
             xml.expense {
               xml.expensetype  expense[:expensetype]
               xml.amount       expense[:amount]
-              xml.description  expense[:description]
-              xml.description2 expense[:description2]
               xml.expensedate  {
                 xml.year  expense[:expensedate].try(:strftime, "%Y")
                 xml.month expense[:expensedate].try(:strftime, "%m")
                 xml.day   expense[:expensedate].try(:strftime, "%d")
               }
               xml.memo         expense[:memo]
+              xml.paidfor  expense[:paidfor]
               xml.locationid   expense[:locationid]
               xml.departmentid expense[:departmentid]
             }
