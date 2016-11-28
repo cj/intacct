@@ -25,6 +25,8 @@ module Intacct
             xml.expense {
               xml.expensetype  expense[:expensetype]
               xml.amount       expense[:amount]
+              xml.description  expense[:description]
+              xml.description2 expense[:description2]
               xml.expensedate  {
                 xml.year  expense[:expensedate].try(:strftime, "%Y")
                 xml.month expense[:expensedate].try(:strftime, "%m")
