@@ -24,6 +24,7 @@ module Intacct
           xml.month attributes.dateposted.try(:strftime, "%m")
           xml.day   attributes.dateposted.try(:strftime, "%d")
         }
+        xml.state           attributes.state
 
         xml.expenses {
           attributes.expenses.each { |expense|
