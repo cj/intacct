@@ -19,6 +19,7 @@ module Intacct
           xml.month attributes.dateposted.try(:strftime, "%m")
           xml.day   attributes.dateposted.try(:strftime, "%d")
         }
+        xml.createdfrom attributes.createdfrom
         xml.customerid attributes.customerid
         xml.documentno attributes.documentno
         xml.origdocdate {
@@ -36,10 +37,18 @@ module Intacct
         xml.message        attributes.message
         xml.shippingmethod attributes.shippingmethod
         xml.supdocid       attributes.supdocid
+        xml.externalid     attributes.externalid
+        xml.basecurr       attributes.basecurr
+        xml.currency       attributes.currency
+        xml.exchratedate {
+          xml.year  attributes.exchratedate.try(:strftime, "%Y")
+          xml.month attributes.exchratedate.try(:strftime, "%m")
+          xml.day   attributes.exchratedate.try(:strftime, "%d")
+        }
+        xml.exchratetype   attributes.exchratetype
         xml.vsoepricelist  attributes.vsoepricelist
         xml.state          attributes.state
         xml.projectid      attributes.projectid
-        xml.currency       attributes.currency
 
         if attributes.sotransitems
           xml.sotransitems {
@@ -47,9 +56,10 @@ module Intacct
               xml.sotransitem {
                 xml.itemid      sotransitem[:itemid]
                 xml.itemdesc    sotransitem[:itemdesc]
-                xml.warehouseid sotransitem[:warehouseid]
                 xml.quantity    sotransitem[:quantity]
                 xml.unit        sotransitem[:unit]
+                xml.price       sotransitem[:price]
+                xml.locationid  sotransitem[:locationid]
               }
             }
           }
