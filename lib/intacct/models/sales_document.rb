@@ -20,8 +20,8 @@ module Intacct
           xml.day   attributes.dateposted.try(:strftime, "%d")
         }
         xml.createdfrom attributes.createdfrom
-        xml.customerid attributes.customerid
-        xml.documentno attributes.documentno
+        xml.customerid  attributes.customerid
+        xml.documentno  attributes.documentno
         xml.origdocdate {
           xml.year  attributes.origdocdate.try(:strftime, "%Y")
           xml.month attributes.origdocdate.try(:strftime, "%m")
@@ -47,6 +47,18 @@ module Intacct
         }
         xml.exchratetype   attributes.exchratetype
         xml.vsoepricelist  attributes.vsoepricelist
+
+        if attributes.customfields
+          xml.customfields {
+            attributes.customfields.each { |customfield|
+              xml.customfield {
+                xml.customfieldname customfield[:customfieldname]
+                xml.customfieldvalue customfield[:customfieldvalue]
+              }
+            }
+          }
+        end
+
         xml.state          attributes.state
         xml.projectid      attributes.projectid
 
