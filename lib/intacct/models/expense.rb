@@ -17,6 +17,7 @@ module Intacct
         }
         xml.expensereportno attributes.expensereportno
         xml.description     attributes.description
+        xml.memo            attributes.memo
         xml.basecurr        attributes.basecurr
         xml.currency        attributes.currency
         xml.dateposted  {
@@ -37,7 +38,7 @@ module Intacct
                 xml.day   expense[:expensedate].try(:strftime, "%d")
               }
               xml.memo         expense[:memo]
-              xml.paidfor  expense[:paidfor]
+              xml.paidfor      expense[:paidfor]
               xml.locationid   expense[:locationid]
               xml.departmentid expense[:departmentid]
               xml.projectid    expense[:projectid]
