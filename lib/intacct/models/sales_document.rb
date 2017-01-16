@@ -66,14 +66,23 @@ module Intacct
           xml.sotransitems {
             attributes.sotransitems.each { |sotransitem|
               xml.sotransitem {
-                xml.itemid       sotransitem[:itemid]
-                xml.itemdesc     sotransitem[:itemdesc]
-                xml.quantity     sotransitem[:quantity]
-                xml.unit         sotransitem[:unit]
-                xml.price        sotransitem[:price]
-                xml.locationid   sotransitem[:locationid]
-                xml.projectid    sotransitem[:projectid]
-                xml.departmentid sotransitem[:departmentid]
+                xml.itemid            sotransitem[:itemid]
+                xml.itemdesc          sotransitem[:itemdesc]
+                xml.quantity          sotransitem[:quantity]
+                xml.unit              sotransitem[:unit]
+                xml.price             sotransitem[:price]
+                xml.locationid        sotransitem[:locationid]
+                xml.departmentid      sotransitem[:departmentid]
+                xml.projectid         sotransitem[:projectid]
+                xml.customerid        sotransitem[:customerid]
+                xml.vendorid          sotransitem[:vendorid]
+                xml.employeeid        sotransitem[:employeeid]
+                xml.classid           sotransitem[:classid]
+                xml.contractid        sotransitem[:contractid]
+                xml.fulfillmentstatus sotransitem[:fulfillmentstatus]
+                xml.taskno            sotransitem[:taskno]
+                xml.billingtemplate   sotransitem[:billingtemplate]
+                xml.dropship          sotransitem[:dropship]
               }
             }
           }
