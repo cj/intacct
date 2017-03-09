@@ -73,6 +73,7 @@ module Intacct
                 xml.price             sotransitem[:price]
                 xml.locationid        sotransitem[:locationid]
                 xml.departmentid      sotransitem[:departmentid]
+                xml.memo              sotransitem[:memo]
                 xml.projectid         sotransitem[:projectid]
                 xml.customerid        sotransitem[:customerid]
                 xml.vendorid          sotransitem[:vendorid]
