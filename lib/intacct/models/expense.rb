@@ -42,6 +42,7 @@ module Intacct
               xml.locationid   expense[:locationid]
               xml.departmentid expense[:departmentid]
               xml.projectid    expense[:projectid]
+              xml.billable     expense[:billable]
             }
           }
         }
