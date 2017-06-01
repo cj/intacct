@@ -26,7 +26,6 @@ module Intacct
         xml.budgetqty attributes.budgetqty
 
         xml.percentcomplete attributes.percentcomplete
-        xml.obspercentcomplete attributes.obspercentcomplete
 
         xml.customerkey attributes.cutomerkey
         xml.customerid attributes.customerid
