@@ -4,7 +4,7 @@ module Intacct
 
       def create_xml(xml)
         xml.employeeid attributes.employeeid
-        xml.begindate attributes.begindate.try(:strftime, '%Y-%m-%d')
+        xml.begindate attributes.begindate.try(:strftime, '%m/%d/%Y')
         xml.description attributes.description
         xml.state attributes.state
         xml.lines attributes.lines
