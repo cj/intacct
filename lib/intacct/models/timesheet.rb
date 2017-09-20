@@ -4,7 +4,7 @@ module Intacct
 
       def create_xml(xml)
         xml.employeeid attributes.employeeid
-        xml.begindate attributes.begindate.try(:strftime, '%m/%d/%Y')
+        xml.BEGINDATE attributes.begindate.try(:strftime, '%m/%d/%Y')
         xml.description attributes.description
         xml.state attributes.state
         xml.lines attributes.lines
@@ -28,7 +28,7 @@ module Intacct
               xml.taskkey timesheetentry[:taskkey]
               xml.customerid timesheetentry[:customerid]
               xml.itemid timesheetentry[:itemid]
-              xml.entrydate timesheetentry[:entrydate].try(:strftime, '%m/%d/%Y')
+              xml.ENTRYDATE timesheetentry[:entrydate].try(:strftime, '%m/%d/%Y')
               xml.qty timesheetentry[:qty]
               xml.description timesheetentry[:description]
               xml.notes timesheetentry[:notes]
