@@ -18,6 +18,7 @@ require 'intacct/response'
 require 'intacct/xml_request'
 require 'intacct/utils'
 
+require 'intacct/models/ap_bill_item'
 require 'intacct/models/bill'
 require 'intacct/models/class_dimension'
 require 'intacct/models/customer'
