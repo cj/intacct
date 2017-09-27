@@ -4,6 +4,8 @@ module Intacct
 
       attr_accessor :customer_data
 
+      api_name 'APBILL'
+
       # define_hook :custom_bill_fields, :bill_item_fields
 
       def create
