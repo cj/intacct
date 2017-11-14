@@ -17,8 +17,8 @@ module Intacct
         xml.preventappo attributes.preventappo
         xml.preventgeninvoice attributes.preventgeninvoice
 
-        xml.begindate attributes.begindate.try(:strftime, '%m/%d/%Y')
-        xml.enddate attributes.enddate.try(:strftime, '%m/%d/%Y')
+        xml.BEGINDATE attributes.begindate.try(:strftime, '%m/%d/%Y')
+        xml.ENDDATE attributes.enddate.try(:strftime, '%m/%d/%Y')
 
         xml.budgetamount attributes.budgetamount
         xml.contractamount attributes.contractamount
