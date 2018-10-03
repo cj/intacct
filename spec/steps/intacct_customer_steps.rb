@@ -2,7 +2,7 @@ module IntacctCustomerSteps
   step('I have a customer') { customer }
 
   step 'I create an Intacct Customer object' do
-    @intacct_customer = Intacct::Customer.new customer
+    @intacct_customer = Intacct::Models::Customer.new customer
   end
 
   step 'I use the #create method' do

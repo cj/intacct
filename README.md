@@ -1,24 +1,113 @@
 # Intacct
 
-TODO: Write a gem description
+This gem provides a Ruby wrapper for the Intacct API.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'intacct'
+    gem 'intacct', github: 'mavenlink-solutions/intacct-ruby', branch: 'mavenlink'
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
 
-    $ gem install intacct
+## Configuration
+
+There are two ways to approach configuration.
+
+1) Add credentials to the `Intacct` module
+
+    Intacct.configure do |config|
+        config.xml_sender_id = ...
+        config.xml_password  = ...
+        config.user_id       = ...
+        config.password      = ...
+        config.company_id    = ...
+    end
+
+Then, when instantiating an `Intacct::Client` no arguments are necessary
+
+    client = Intacct::Client.new
+    
+2) Provide credentials when instantiating an `Intacct::Client`
+
+    client = Intacct::Client.new(xml_sender_id: ..., xml_password: ..., user_id: ..., password: ..., company_id: ...)
+    
+## Supported Objects
+
+Currently, the following objects are supported:
+
+- Class (named ClassDimension) (read-only)
+- Department (read-only)
+- Employee (read-only)
+- Expense
+- Location (read-only)
+- Project
+- Project Status (read-only)
+- Project Type (read-only)
+- Task
+- Timesheet
+
 
 ## Usage
+    
+#### Creating a new project
 
-TODO: Write usage instructions here
+    project = client.projects.build(name: "New Project", projectcategory: "Contract")
+    project.create
+    
+#### Fetching a project
+    
+    project = client.projects.read(key: <Project ID>)
+    
+#### Updating a project
+    
+    project.name = "Updated Project"
+    project.update
+    
+#### Querying
+
+The `read_by_query` method returns a `QueryResult` object. This object has the following methods:
+
+* `results`
+* `total_count`
+
+    
+    query = client.projects.read_by_query(query: <Query String>)
+    results = query.results
+
+By default, 1000 records will be returned with `read_by_query`.
+
+The number of results returned can be set with the `page_size` option.
+
+    query = client.projects.read_by_query(query: <Query String>, page_size: 500)
+
+If the number of matching records is greater than the page size, auto-pagination will occur by default when
+the `results` method is called on the `QueryResult` object.
+
+    results = query.results                 # This will auto-paginate
+    results = query.results(all: false)     # This will NOT auto-paginate
+
+## Bulk Creating Records
+
+This library provides a class method to create multiple records of a single type (e.g. Project) in one transaction.
+
+    bulk_attributes = [ {name: "Project 1", projectcategory: "Contract"}, 
+                        {name: "Project 2", projectcategory: "Contract"} ]
+
+    client.projects.bulk_create(bulk_attributes)
+
+## The Intacct `inspect` action
+
+Intacct Web Services provides a method to inspect an object and its fields. To do so with this library,
+use the `inspect_object` action.
+
+    client.projects.inspect_object
+
+    # With detail
+    client.projects.inspect_object(detail: true)
 
 ## Contributing
 
