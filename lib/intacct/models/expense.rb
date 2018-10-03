@@ -27,6 +27,17 @@ module Intacct
         }
         xml.state           attributes.state
 
+        if attributes.customfields
+          xml.customfields {
+            attributes.customfields.each { |customfield|
+              xml.customfield {
+                xml.customfieldname customfield[:customfieldname]
+                xml.customfieldvalue customfield[:customfieldvalue]
+              }
+            }
+          }
+        end
+
         xml.expenses {
           attributes.expenses.each { |expense|
             xml.expense {
